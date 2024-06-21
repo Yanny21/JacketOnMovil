@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="15f9ccb1-1bf2-49f6-a7ad-388512832d1b" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(tabs)/_layout.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(tabs)/actividad.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(tabs)/asignaAct.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(tabs)/editar.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(tabs)/explore.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(tabs)/index.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(tabs)/login.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(tabs)/password.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(tabs)/porfile.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(tabs)/registro.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(tabs)/reporte.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(tabs)/styles.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/+html.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/+not-found.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/_layout.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/fonts/SpaceMono-Regular.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/adaptive-icon.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/favicon.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/icon.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/partial-react-logo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/react-logo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/react-logo@2x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/react-logo@3x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/splash.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/babel.config.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/Collapsible.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/ExternalLink.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/HelloWave.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/ParallaxScrollView.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/ThemedText.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/ThemedView.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/__tests__/ThemedText-test.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/__tests__/__snapshots__/ThemedText-test.tsx.snap" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/navigation/TabBarIcon.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/constants/Colors.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/hooks/useColorScheme.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/hooks/useColorScheme.web.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/hooks/useThemeColor.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/reset-project.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="PATH_TO_GIT" value="C:\Program Files\Git\bin\git.exe" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="2i4kXiUMVe52vBhzefLJXDnlbL0" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "master",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/yanny/movilIntegradoraI",
+    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\yanny\movilIntegradoraI\constants" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="15f9ccb1-1bf2-49f6-a7ad-388512832d1b" name="Changes" comment="" />
+      <created>1718757278125</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1718757278125</updated>
+    </task>
+    <servers />
+  </component>
+</project>
