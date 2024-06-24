@@ -1,6 +1,6 @@
 import React from 'react';
-import AsignaAct from './registro';
+import LoginScreen from './login';
 
 export default function asignaAct() {
-  return <AsignaAct/>;
+  return <LoginScreen/>;
 }

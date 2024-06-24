@@ -1,7 +1,8 @@
-// login.tsx
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback, Alert } from 'react-native';
 import axios from 'axios';
+import { FontAwesome, FontAwesome5 } from '@expo/vector-icons'; // Importa FontAwesome5
+import { styles } from './styles';
 
 export default function LoginScreen({ navigation }) {
   const [user_email, setUserEmail] = useState('');
@@ -29,119 +30,56 @@ export default function LoginScreen({ navigation }) {
         <View style={styles.inner}>
           <View style={styles.container}>
             <TouchableOpacity style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>X</Text>
+              <FontAwesome name="times" size={22} color="#F2E527" />
             </TouchableOpacity>
             <Text style={styles.title}>Iniciar sesión</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Email"
-              placeholderTextColor="#A9A9A9"
-              value={user_email}
-              onChangeText={text => setUserEmail(text)}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Password"
-              placeholderTextColor="#A9A9A9"
-              secureTextEntry
-              value={user_password}
-              onChangeText={text => setUserPassword(text)}
-            />
-            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-              <Text style={styles.loginButtonText}>Iniciar Sesión</Text>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="Correo"
+                placeholderTextColor="#A9A9A9"
+                value={user_email}
+                onChangeText={text => setUserEmail(text)}
+              />
+              <FontAwesome name="envelope" size={24} color="#F2E527" style={styles.icon} />
+            </View>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="Contraseña"
+                placeholderTextColor="#A9A9A9"
+                secureTextEntry
+                value={user_password}
+                onChangeText={text => setUserPassword(text)}
+              />
+              <FontAwesome name="lock" size={24} color="#F2E527" style={styles.icon} />
+            </View>
+            <TouchableOpacity style={styles.Button} onPress={handleLogin}>
+              <Text style={styles.ButtonText}>Iniciar Sesión</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.cancelButton}>
-              <Text style={styles.cancelButtonText}>Cancelar</Text>
-            </TouchableOpacity>
-            <Text style={styles.newUserText}>
-              Nuevo usuario?{' '}
-              <Text style={styles.createAccountText} onPress={() => navigation.navigate('SignUp')}>
-                Crear una cuenta
-              </Text>
-            </Text>
+
+           <Text style={[styles.newUserText, { color: '#FFFFFF' }]}>
+             ¿Aún no tienes cuenta?{' '}
+             <Text style={styles.createAccountText} onPress={() => navigation.navigate('SignUp')}>
+               ¡Regístrate Aquí!
+             </Text>
+           </Text>
+
+           <Text style={[styles.orText, { color: '#FFFFFF', marginVertical: 25 }]}>
+             ────────   Iniciar con   ────────
+           </Text>
+
+           <View style={styles.socialButtonsContainer}>
+             <TouchableOpacity style={styles.socialButton}>
+               <FontAwesome5 name="google" size={30} color="#F2E527" />
+             </TouchableOpacity>
+             <TouchableOpacity style={styles.socialButton}>
+               <FontAwesome5 name="facebook" size={30} color="#F2E527" />
+             </TouchableOpacity>
+           </View>
           </View>
         </View>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  outerContainer: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  inner: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  container: {
-    width: '90%',
-    backgroundColor: '#333557',
-    borderRadius: 25,
-    padding: 20,
-    alignItems: 'center',
-  },
-  closeButton: {
-    position: 'absolute',
-    top: 12,
-    right: 10,
-    backgroundColor: '#2F2F2F',
-    borderRadius: 45,
-    width: 45,
-    height: 45,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  closeButtonText: {
-    color: '#24224B',
-    fontSize: 10,
-    fontWeight: 'bold',
-  },
-  title: {
-    fontSize: 24,
-    color: '#FFFFFF',
-    marginBottom: 20,
-  },
-  newUserText: {
-    color: '#A9A9A9',
-    marginBottom: 30,
-  },
-  createAccountText: {
-    color: '#27A4F2',
-    textDecorationLine: 'underline',
-  },
-  input: {
-    width: '100%',
-    backgroundColor: '#2F2F2F',
-    borderRadius: 10,
-    padding: 15,
-    marginBottom: 20,
-  },
-  loginButton: {
-    width: '100%',
-    backgroundColor: '#FFD700',
-    padding: 15,
-    borderRadius: 25,
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  loginButtonText: {
-    color: '#24224B',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  cancelButton: {
-    width: '100%',
-    backgroundColor: '#FF6347',
-    padding: 15,
-    borderRadius: 25,
-    alignItems: 'center',
-  },
-  cancelButtonText: {
-    color: '#FFFFFF',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-});
