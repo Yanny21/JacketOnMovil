@@ -75,8 +75,17 @@ app.post('/login', (req, res) => {
       }
 
       if (result.length > 0) {
-        // Usuario encontrado, enviar respuesta de inicio de sesión exitoso
-        res.json({ message: 'Inicio de sesión exitoso' });
+        // Usuario encontrado, enviar respuesta de inicio de sesión exitoso con datos del usuario
+        const user = result[0]; // Tomar el primer usuario encontrado (suponiendo que el correo es único)
+        res.json({
+          message: 'Inicio de sesión exitoso',
+          user: {
+            user_id: user.user_id,
+            user_name: user.user_name,
+            user_email: user.user_email,
+            // Agregar más campos del usuario si es necesario
+          }
+        });
       } else {
         // Usuario no encontrado, enviar mensaje de error
         res.status(401).json({ message: 'Credenciales incorrectas' });
@@ -84,6 +93,7 @@ app.post('/login', (req, res) => {
     });
   });
 });
+
 
 
 // Endpoint para verificar las credenciales de registro

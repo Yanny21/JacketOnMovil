@@ -1,35 +1,45 @@
-// MiCuenta.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from 'expo-router';
 
-export default function MiCuenta({ navigation }) {
-  const [iconColors, setIconColors] = useState({
-    viewList: '#2B2C5E',
-    alertCircle: '#2B2C5E',
-    accountGroup: '#2B2C5E',
-    account: '#2B2C5E',
-    cloud: '#2B2C5E',
-  });
+export default function MiCuenta() {
+  const navigation = useNavigation();
+  const [userData, setUserData] = useState(null); // State to hold user data
+
+  useEffect(() => {
+    // Function to fetch user data from AsyncStorage or your API
+    const fetchUserData = async () => {
+      try {
+        // Replace with actual key used to store user data in AsyncStorage
+        const storedUserData = await AsyncStorage.getItem('userData');
+
+        if (storedUserData) {
+          const parsedUserData = JSON.parse(storedUserData);
+          setUserData(parsedUserData);
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []); // Empty dependency array ensures this effect runs only once
 
   const handleEditPress = () => {
-    // Lógica para manejar el evento de editar información
+    // Navigate to the screen where user can edit information
     console.log('Editar información presionada');
+    // Example navigation with Expo Router
+    navigation.push('/editar-informacion');
   };
 
   const handleNavigation = (screenName, iconName) => {
-    // Actualiza el color del ícono correspondiente al presionar el botón
-    const updatedColors = {
-      ...iconColors,
-      [iconName]: '#F2E527', // Cambia el color al nuevo color deseado
-    };
-    setIconColors(updatedColors);
-
-    // Aquí puedes manejar la navegación según los botones presionados
+    // Handle navigation logic
     console.log('Navigating to screen:', screenName);
-    // Ejemplo de navegación utilizando React Navigation
-    // navigation.navigate(screenName);
+    // Example navigation with Expo Router
+    navigation.push(screenName);
   };
 
   return (
@@ -38,14 +48,18 @@ export default function MiCuenta({ navigation }) {
       <View style={styles.profileIconContainer}>
         <Icon name="account-circle" size={100} color="#2B2C5E" />
       </View>
-      <Text style={styles.name}>John Doe</Text>
-      <Text style={styles.area}>Área</Text>
-      <View style={styles.infoContainer}>
-        <Text style={styles.label}>Correo:</Text>
-        <Text style={styles.label}>Fecha de registro: 14/14/2222</Text>
-        <Text style={styles.label}>Nombre:</Text>
-        <Text style={styles.label}>Apellidos:</Text>
-      </View>
+      {userData && (
+        <>
+          <Text style={styles.name}>{userData.user_name}</Text>
+          <Text style={styles.area}>{userData.area}</Text>
+          <View style={styles.infoContainer}>
+            <Text style={styles.label}>Correo: {userData.user_email}</Text>
+            <Text style={styles.label}>Fecha de registro: {userData.registered_date}</Text>
+            <Text style={styles.label}>Nombre: {userData.first_name}</Text>
+            <Text style={styles.label}>Apellidos: {userData.last_name}</Text>
+          </View>
+        </>
+      )}
       <TouchableOpacity style={styles.button} onPress={handleEditPress}>
         <Text style={styles.buttonText}>Editar información</Text>
       </TouchableOpacity>
@@ -53,33 +67,33 @@ export default function MiCuenta({ navigation }) {
       <View style={styles.navigationBar}>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('Screen1', 'viewList')}
+          onPress={() => handleNavigation('/screen1', 'viewList')}
         >
-          <Icon name="view-list" size={30} color={iconColors.viewList} />
+          <Icon name="view-list" size={30} color="#2B2C5E" />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('Screen2', 'alertCircle')}
+          onPress={() => handleNavigation('/screen2', 'alertCircle')}
         >
-          <Icon name="alert-circle" size={30} color={iconColors.alertCircle} />
+          <Icon name="alert-circle" size={30} color="#2B2C5E" />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('Screen3', 'accountGroup')}
+          onPress={() => handleNavigation('/screen3', 'accountGroup')}
         >
-          <Icon name="account-group" size={30} color={iconColors.accountGroup} />
+          <Icon name="account-group" size={30} color="#2B2C5E" />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('Screen4', 'account')}
+          onPress={() => handleNavigation('/screen4', 'account')}
         >
-          <Icon name="account" size={30} color={iconColors.account} />
+          <Icon name="account" size={30} color="#2B2C5E" />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('Screen5', 'cloud')}
+          onPress={() => handleNavigation('/screen5', 'cloud')}
         >
-          <Icon name="cloud" size={30} color={iconColors.cloud} />
+          <Icon name="cloud" size={30} color="#2B2C5E" />
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -89,28 +103,28 @@ export default function MiCuenta({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    justifyContent: 'flex-start', // Alinea el contenido hacia arriba
+    justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    paddingVertical: 40, // Aumenta el espacio en la parte superior e inferior
+    paddingVertical: 40,
     paddingHorizontal: 20,
   },
   title: {
-    fontSize: 24, // Aumenta el tamaño del título
+    fontSize: 24,
     color: '#2B2C5E',
-    marginTop: 10, // Menos espacio arriba del título
-    marginBottom: 20, // Más espacio debajo del título
+    marginTop: 10,
+    marginBottom: 20,
   },
   profileIconContainer: {
     marginVertical: 20,
   },
   name: {
-    fontSize: 20, // Ajusta el tamaño del nombre
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#2B2C5E',
   },
   area: {
-    fontSize: 18, // Ajusta el tamaño del área
+    fontSize: 18,
     color: '#2B2C5E',
     marginVertical: 10,
   },
@@ -139,9 +153,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     width: '100%',
     marginTop: 300,
-    paddingBottom: 20, // Añade espacio abajo de la barra de navegación
-
-    borderTopColor: '#2B2C5E', // Color de la línea superior
+    paddingBottom: 20,
+    borderTopColor: '#2B2C5E',
   },
   navButton: {
     alignItems: 'center',
