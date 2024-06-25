@@ -1,24 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from 'expo-router';
+import { useRouter } from 'expo-router';
 
 export default function MiCuenta() {
-  const navigation = useNavigation();
-  const [userData, setUserData] = useState(null); // State to hold user data
+  const router = useRouter();
+  const [userData, setUserData] = useState(null);
 
   useEffect(() => {
-    // Function to fetch user data from AsyncStorage or your API
     const fetchUserData = async () => {
       try {
-        // Replace with actual key used to store user data in AsyncStorage
         const storedUserData = await AsyncStorage.getItem('userData');
-
         if (storedUserData) {
           const parsedUserData = JSON.parse(storedUserData);
-          setUserData(parsedUserData);
+          const response = await fetch(`http://10.13.14.111:3000/user-data?userId=${parsedUserData.user_id}`);
+          const data = await response.json();
+          if (response.ok) {
+            setUserData(data.user);
+          } else {
+            console.error('Error fetching user data from server:', data.message);
+          }
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -26,20 +29,41 @@ export default function MiCuenta() {
     };
 
     fetchUserData();
-  }, []); // Empty dependency array ensures this effect runs only once
+  }, []);
 
   const handleEditPress = () => {
-    // Navigate to the screen where user can edit information
-    console.log('Editar información presionada');
-    // Example navigation with Expo Router
-    navigation.push('/editar-informacion');
+    router.push('/editar-informacion');
   };
 
-  const handleNavigation = (screenName, iconName) => {
-    // Handle navigation logic
-    console.log('Navigating to screen:', screenName);
-    // Example navigation with Expo Router
-    navigation.push(screenName);
+  const handleNavigation = (screenName) => {
+    router.push(screenName);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('userData');
+      router.push('../login');
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  };
+
+  const confirmLogout = () => {
+    Alert.alert(
+      'Confirmar Cierre de Sesión',
+      '¿Estás seguro de que quieres cerrar sesión?',
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel',
+        },
+        {
+          text: 'Sí',
+          onPress: handleLogout,
+        },
+      ],
+      { cancelable: false }
+    );
   };
 
   return (
@@ -51,47 +75,48 @@ export default function MiCuenta() {
       {userData && (
         <>
           <Text style={styles.name}>{userData.user_name}</Text>
-          <Text style={styles.area}>{userData.area}</Text>
           <View style={styles.infoContainer}>
             <Text style={styles.label}>Correo: {userData.user_email}</Text>
-            <Text style={styles.label}>Fecha de registro: {userData.registered_date}</Text>
-            <Text style={styles.label}>Nombre: {userData.first_name}</Text>
-            <Text style={styles.label}>Apellidos: {userData.last_name}</Text>
+            <Text style={styles.label}>Nombre: {userData.user_name}</Text>
+            <Text style={styles.label}>Apellidos: {userData.user_last_name}</Text>
           </View>
         </>
       )}
       <TouchableOpacity style={styles.button} onPress={handleEditPress}>
         <Text style={styles.buttonText}>Editar información</Text>
       </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={confirmLogout}>
+        <Text style={styles.buttonText}>Cerrar sesión</Text>
+      </TouchableOpacity>
 
       <View style={styles.navigationBar}>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('/screen1', 'viewList')}
+          onPress={() => handleNavigation('/screen1')}
         >
           <Icon name="view-list" size={30} color="#2B2C5E" />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('/screen2', 'alertCircle')}
+          onPress={() => handleNavigation('/screen2')}
         >
           <Icon name="alert-circle" size={30} color="#2B2C5E" />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('/screen3', 'accountGroup')}
+          onPress={() => handleNavigation('/screen3')}
         >
           <Icon name="account-group" size={30} color="#2B2C5E" />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('/screen4', 'account')}
+          onPress={() => handleNavigation('/screen4')}
         >
           <Icon name="account" size={30} color="#2B2C5E" />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('/screen5', 'cloud')}
+          onPress={() => handleNavigation('/screen5')}
         >
           <Icon name="cloud" size={30} color="#2B2C5E" />
         </TouchableOpacity>
