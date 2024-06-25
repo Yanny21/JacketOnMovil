@@ -14,7 +14,7 @@ const db = mysql.createPool({
   host: 'localhost',
   user: 'root',
   password: 'Arasaka16.',
-  database: 'jacket_on_test',
+  database: 'jacketon',
   port: 3306,
 });
 
@@ -66,7 +66,7 @@ app.post('/login', (req, res) => {
     const hashedPassword = md5(user_password);
 
     // Consultar si existe un usuario con las credenciales proporcionadas
-    connection.query('SELECT * FROM usuario WHERE user_email = ? AND user_password = ?', [user_email, hashedPassword], (err, result) => {
+    connection.query('SELECT * FROM usuarios WHERE email_usu = ? AND pass_usu = ?', [user_email, hashedPassword], (err, result) => {
       connection.release(); // Liberar la conexión después de usarla
 
       if (err) {
@@ -80,9 +80,10 @@ app.post('/login', (req, res) => {
         res.json({
           message: 'Inicio de sesión exitoso',
           user: {
-            user_id: user.user_id,
-            user_name: user.user_name,
-            user_email: user.user_email,
+            user_id: user.id_usu,
+            user_name: user.nom_usu,
+            user_email: user.email_usu,
+            user_last_name: user.app_usu,
             // Agregar más campos del usuario si es necesario
           }
         });
@@ -94,6 +95,46 @@ app.post('/login', (req, res) => {
   });
 });
 
+
+// Endpoint para obtener los datos del usuario
+app.get('/user-data', (req, res) => {
+  const userId = req.query.userId; // Supongamos que pasamos el ID del usuario como un query param
+
+  if (!userId) {
+    return res.status(400).json({ message: 'ID de usuario requerido' });
+  }
+
+  db.getConnection((err, connection) => {
+    if (err) {
+      console.error('Error al conectar a la base de datos:', err);
+      return res.status(500).json({ message: 'No hay conexión a la base de datos' });
+    }
+
+    connection.query('SELECT * FROM usuarios WHERE id_usu = ?', [userId], (err, result) => {
+      connection.release(); // Liberar la conexión después de usarla
+
+      if (err) {
+        console.error('Error al obtener los datos del usuario:', err);
+        return res.status(500).json({ message: 'Error al obtener los datos del usuario' });
+      }
+
+      if (result.length > 0) {
+        const user = result[0];
+        res.json({
+          message: 'Datos del usuario obtenidos exitosamente',
+          user: {
+            user_id: user.id_usu,
+            user_name: user.nom_usu,
+            user_email: user.email_usu,
+            user_last_name: user.app_usu
+          }
+        });
+      } else {
+        res.status(404).json({ message: 'Usuario no encontrado' });
+      }
+    });
+  });
+});
 
 
 // Endpoint para verificar las credenciales de registro
@@ -120,7 +161,7 @@ app.post('/signup', (req, res) => {
   const hashedPassword = crypto.createHash('md5').update(contrasena).digest('hex');
 
   // Verificar si el email ya existe en la base de datos
-  db.query("SELECT user_email FROM usuario WHERE user_email = ?", [email], (err, result) => {
+  db.query("SELECT email_usu FROM usuarios WHERE email_usu = ?", [email], (err, result) => {
       if (err) {
           console.error("Error al verificar el email en la base de datos", err);
           return res.status(500).send("Error interno del servidor");
@@ -132,8 +173,8 @@ app.post('/signup', (req, res) => {
       }
 
       // Si el email no existe en la base de datos, proceder con la inserción
-      db.query("INSERT INTO usuario(user_name, user_last_name, user_email, user_password, tipo, status) VALUES(?,?,?,?,?,?)",
-          [nombre, apellidos, email, hashedPassword, tipo, 'activo'],
+      db.query("INSERT INTO usuarios(nom_usu, app_usu, email_usu, pass_usu, tipo_usu) VALUES(?,?,?,?,?)",
+          [nombre, apellidos, email, hashedPassword, tipo],
           (err, result) => {
               if (err) {
                   console.error("Error al ejecutar al INSERTAR", err);
