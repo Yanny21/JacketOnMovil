@@ -1,4 +1,3 @@
-// styles.ts
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
@@ -16,8 +15,8 @@ export const styles = StyleSheet.create({
   // Estilos específicos para MiCuenta
   container: {
     width: '90%',
-    backgroundColor: '#333557', // Color de fondo del rectángulo
-    borderRadius: 25, // Bordes redondeados
+    backgroundColor: '#333557',
+    borderRadius: 25,
     padding: 20,
     alignItems: 'center',
   },
@@ -26,9 +25,9 @@ export const styles = StyleSheet.create({
     top: 30,
     right: 30,
     backgroundColor: '#2F2F2F',
-    borderRadius: 45, // Valor suficientemente alto para un círculo visible
-    width: 45, // Ancho igual a la altura para formar un círculo
-    height: 45, // Altura igual al ancho para formar un círculo
+    borderRadius: 45,
+    width: 45,
+    height: 45,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -76,5 +75,35 @@ export const styles = StyleSheet.create({
     color: '#24224B',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  newUserText: {
+    fontSize: 14,
+  },
+  createAccountText: {
+
+    color: '#27A4F2',
+    textDecorationLine: 'underline',
+
+  },
+  orText: {
+    fontSize: 14,
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginVertical: 10,
+  },
+  socialButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+
+  },
+  socialButton: {
+    backgroundColor: '#2F2F2F',
+    padding: 10,
+    borderRadius: 55,
+    width: 55,
+    height: 55,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
