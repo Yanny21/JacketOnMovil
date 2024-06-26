@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback, Alert } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { styles } from './styles';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
 
-export default function ChangePScreen({ navigation }) {
+export default function ChangePScreen() {
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const router = useRouter();
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
@@ -21,7 +26,43 @@ export default function ChangePScreen({ navigation }) {
   }, []);
 
   const handleIconPress = () => {
-    console.log('Icono presionado');
+    router.back(); // Regresar a la pantalla anterior
+  };
+
+  const handleChangePassword = async () => {
+    if (newPassword !== confirmPassword) {
+      Alert.alert('Error', 'Las contraseñas no coinciden');
+      return;
+    }
+
+    try {
+      const userData = await AsyncStorage.getItem('userData');
+      if (userData) {
+        const { user_id } = JSON.parse(userData);
+
+        const response = await fetch('http://192.168.3.15:3000/change-password', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ user_id, new_password: newPassword }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          Alert.alert('Éxito', 'Contraseña cambiada exitosamente');
+          router.back(); // Regresar a la pantalla anterior
+        } else {
+          Alert.alert('Error', data.message || 'Error al cambiar la contraseña');
+        }
+      } else {
+        Alert.alert('Error', 'No se encontró la información del usuario');
+      }
+    } catch (error) {
+      console.error('Error changing password:', error);
+      Alert.alert('Error', 'Error al cambiar la contraseña');
+    }
   };
 
   return (
@@ -42,6 +83,8 @@ export default function ChangePScreen({ navigation }) {
                 placeholder="Nueva contraseña"
                 placeholderTextColor="#A9A9A9"
                 secureTextEntry
+                value={newPassword}
+                onChangeText={setNewPassword}
               />
               <FontAwesome name="lock" size={24} color="#F2E527" style={styles.icon} />
             </View>
@@ -51,10 +94,12 @@ export default function ChangePScreen({ navigation }) {
                 placeholder="Confirmar contraseña"
                 placeholderTextColor="#A9A9A9"
                 secureTextEntry
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
               />
               <FontAwesome name="lock" size={24} color="#F2E527" style={styles.icon} />
             </View>
-            <TouchableOpacity style={styles.Button}>
+            <TouchableOpacity style={styles.Button} onPress={handleChangePassword}>
               <Text style={styles.ButtonText}>Guardar contraseña</Text>
             </TouchableOpacity>
           </View>

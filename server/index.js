@@ -28,7 +28,7 @@ app.get('/connect-db', (req, res) => {
     }
 
     // Consultar el primer registro de la tabla usuario
-    connection.query('SELECT * FROM usuario LIMIT 1', (err, result) => {
+    connection.query('SELECT * FROM usuarios LIMIT 1', (err, result) => {
       connection.release(); // Liberar la conexión después de usarla
 
       if (err) {
@@ -65,32 +65,79 @@ app.post('/login', (req, res) => {
     // Calcular el hash MD5 de la contraseña proporcionada por el usuario
     const hashedPassword = md5(user_password);
 
-    // Consultar si existe un usuario con las credenciales proporcionadas
-    connection.query('SELECT * FROM usuarios WHERE email_usu = ? AND pass_usu = ?', [user_email, hashedPassword], (err, result) => {
-      connection.release(); // Liberar la conexión después de usarla
-
+    // Consultar si existe un usuario con las credenciales proporcionadas y con estatus activo
+    connection.query('SELECT * FROM usuarios WHERE email_usu = ? AND pass_usu = ? AND estatus = 1', [user_email, hashedPassword], (err, result) => {
       if (err) {
+        connection.release(); // Liberar la conexión en caso de error
         console.error('Error al verificar las credenciales:', err);
         return res.status(500).json({ message: 'Error al verificar las credenciales' });
       }
 
       if (result.length > 0) {
-        // Usuario encontrado, enviar respuesta de inicio de sesión exitoso con datos del usuario
         const user = result[0]; // Tomar el primer usuario encontrado (suponiendo que el correo es único)
-        res.json({
-          message: 'Inicio de sesión exitoso',
-          user: {
-            user_id: user.id_usu,
-            user_name: user.nom_usu,
-            user_email: user.email_usu,
-            user_last_name: user.app_usu,
-            // Agregar más campos del usuario si es necesario
+
+        // Verificar que el campo sesion sea 0 antes de permitir el inicio de sesión
+        if (user.sesion !== 0) {
+          connection.release(); // Liberar la conexión si el estado de sesion no es 0
+          return res.status(401).json({ message: 'No se puede iniciar sesión. El usuario ya tiene una sesión activa.' });
+        }
+
+        // Actualizar campo sesion a 1
+        connection.query('UPDATE usuarios SET sesion = 1 WHERE id_usu = ?', [user.id_usu], (err, updateResult) => {
+          connection.release(); // Liberar la conexión después de actualizar
+
+          if (err) {
+            console.error('Error al actualizar el estado de sesión del usuario:', err);
+            return res.status(500).json({ message: 'Error al actualizar el estado de sesión del usuario' });
           }
+
+          // Envía respuesta de inicio de sesión exitoso con datos del usuario
+          res.json({
+            message: 'Inicio de sesión exitoso',
+            user: {
+              user_id: user.id_usu,
+              user_name: user.nom_usu,
+              user_email: user.email_usu,
+              user_last_name: user.app_usu,
+              // Agregar más campos del usuario si es necesario
+            }
+          });
         });
       } else {
-        // Usuario no encontrado, enviar mensaje de error
-        res.status(401).json({ message: 'Credenciales incorrectas' });
+        // Usuario no encontrado o cuenta inactiva, enviar mensaje de error
+        connection.release(); // Liberar la conexión si el usuario no es encontrado
+        res.status(401).json({ message: 'Credenciales incorrectas o cuenta inactiva' });
       }
+    });
+  });
+});
+
+
+// Endpoint para cerrar sesión
+app.post('/logout', (req, res) => {
+  const { user_id } = req.body;
+
+  if (!user_id) {
+    return res.status(400).json({ message: 'No se proporcionó el ID de usuario' });
+  }
+
+  db.getConnection((err, connection) => {
+    if (err) {
+      console.error('Error al conectar a la base de datos:', err);
+      return res.status(500).json({ message: 'No hay conexión a la base de datos' });
+    }
+
+    // Actualizar campo sesion a 0
+    connection.query('UPDATE usuarios SET sesion = 0 WHERE id_usu = ?', [user_id], (err, updateResult) => {
+      connection.release(); // Liberar la conexión después de actualizar
+
+      if (err) {
+        console.error('Error al actualizar el estado de sesión del usuario:', err);
+        return res.status(500).json({ message: 'Error al actualizar el estado de sesión del usuario' });
+      }
+
+      // Envía respuesta de cierre de sesión exitoso
+      res.json({ message: 'Cierre de sesión exitoso' });
     });
   });
 });
@@ -126,7 +173,8 @@ app.get('/user-data', (req, res) => {
             user_id: user.id_usu,
             user_name: user.nom_usu,
             user_email: user.email_usu,
-            user_last_name: user.app_usu
+            user_last_name: user.app_usu,
+            user_type: user.tipo_usu
           }
         });
       } else {
@@ -135,6 +183,103 @@ app.get('/user-data', (req, res) => {
     });
   });
 });
+
+
+// Endpoint para realizar una baja lógica de una cuenta de usuario
+app.put('/user-delete', (req, res) => {
+  const { user_id } = req.body;
+
+  if (!user_id) {
+    return res.status(400).json({ message: 'ID de usuario requerido' });
+  }
+
+  db.getConnection((err, connection) => {
+    if (err) {
+      console.error('Error al conectar a la base de datos:', err);
+      return res.status(500).json({ message: 'No hay conexión a la base de datos' });
+    }
+
+    connection.query('UPDATE usuarios SET estatus = 0 WHERE id_usu = ?', [user_id], (err, result) => {
+      connection.release();
+
+      if (err) {
+        console.error('Error al realizar la baja lógica de la cuenta de usuario:', err);
+        return res.status(500).json({ message: 'Error al realizar la baja lógica de la cuenta de usuario' });
+      }
+
+      if (result.affectedRows > 0) {
+        res.json({ message: 'Baja lógica de la cuenta de usuario realizada exitosamente' });
+      } else {
+        res.status(404).json({ message: 'Usuario no encontrado' });
+      }
+    });
+  });
+});
+
+
+//endpoint para modificar contraseña
+
+app.post('/change-password', (req, res) => {
+  const { user_id, new_password } = req.body;
+
+  if (!user_id || !new_password) {
+    return res.status(400).json({ message: 'ID de usuario y nueva contraseña requeridos' });
+  }
+
+  const hashedPassword = crypto.createHash('md5').update(new_password).digest('hex');
+
+  db.getConnection((err, connection) => {
+    if (err) {
+      console.error('Error al conectar a la base de datos:', err);
+      return res.status(500).json({ message: 'No hay conexión a la base de datos' });
+    }
+
+    connection.query('UPDATE usuarios SET pass_usu = ? WHERE id_usu = ?', [hashedPassword, user_id], (err, result) => {
+      connection.release(); // Liberar la conexión después de usarla
+
+      if (err) {
+        console.error('Error al cambiar la contraseña:', err);
+        return res.status(500).json({ message: 'Error al cambiar la contraseña' });
+      }
+
+      if (result.affectedRows > 0) {
+        res.json({ message: 'Contraseña cambiada exitosamente' });
+      } else {
+        res.status(404).json({ message: 'Usuario no encontrado' });
+      }
+    });
+  });
+});
+
+
+// Endpoint para actualizar los datos del usuario
+app.post('/update-user', (req, res) => {
+  const { user_id, user_name, user_last_name, user_email } = req.body;
+
+  if (!user_id || !user_name || !user_last_name || !user_email) {
+    return res.status(400).json({ message: 'Todos los campos son requeridos' });
+  }
+
+  db.getConnection((err, connection) => {
+    if (err) {
+      console.error('Error al conectar a la base de datos:', err);
+      return res.status(500).json({ message: 'No hay conexión a la base de datos' });
+    }
+
+    connection.query('UPDATE usuarios SET nom_usu = ?, app_usu = ?, email_usu = ? WHERE id_usu = ?', [user_name, user_last_name, user_email, user_id], (err, result) => {
+      console.log('exito');
+      connection.release(); // Liberar la conexión después de usarla
+
+      if (err) {
+        console.error('Error al actualizar los datos del usuario:', err);
+        return res.status(500).json({ message: 'Error al actualizar los datos del usuario' });
+      }
+
+      res.json({ message: 'Datos de usuario actualizados exitosamente' });
+    });
+  });
+});
+
 
 
 // Endpoint para verificar las credenciales de registro
