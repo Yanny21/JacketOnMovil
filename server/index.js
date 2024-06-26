@@ -13,7 +13,7 @@ const db = mysql.createPool({
   connectionLimit: 10,
   host: 'localhost',
   user: 'root',
-  password: 'Arasaka16.',
+  password: 'Moreno0310SM21',
   database: 'jacketon',
   port: 3306,
 });
@@ -26,17 +26,17 @@ app.get('/connect-db', (req, res) => {
       res.status(500).send('No hay conexión a la base de datos');
       return;
     }
-    
+
     // Consultar el primer registro de la tabla usuario
     connection.query('SELECT * FROM usuarios LIMIT 1', (err, result) => {
       connection.release(); // Liberar la conexión después de usarla
-      
+
       if (err) {
         console.error('Error al consultar el primer registro:', err);
         res.status(500).send('Error al consultar el primer registro');
         return;
       }
-      
+
       if (result.length > 0) {
         const firstUser = result[0];
         res.send(`Primer usuario: ${JSON.stringify(firstUser)}`);
