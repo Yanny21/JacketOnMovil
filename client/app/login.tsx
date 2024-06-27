@@ -13,7 +13,7 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://192.168.1.74:3000/login', {
+      const response = await axios.post('http://10.13.0.68:3000/login', {
         user_email: user_email,
         user_password: user_password,
       });

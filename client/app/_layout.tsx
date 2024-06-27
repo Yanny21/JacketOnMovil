@@ -5,7 +5,7 @@ export default function RootLayout() {
   
   return (
     <Stack>
-      <Stack.Screen name="asignaAct" />
+      <Stack.Screen name="detallesAct" />
     </Stack>
   );
 }

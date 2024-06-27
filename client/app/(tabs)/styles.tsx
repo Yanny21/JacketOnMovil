@@ -205,6 +205,56 @@ export const styles = StyleSheet.create({
        justifyContent: 'space-between',
        height: 80, // Ajusta esta altura según sea necesario
      },
+      scrollViewContent: {
+         paddingVertical: 40,
+         paddingHorizontal: 20,
+         alignItems: 'center',
+       },
+       profileIconContainer: {
+           marginVertical: 20,
+       },
+name: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#2B2C5E',
+  },
 
+   infoContainer: {
+      alignItems: 'flex-start',
+      marginVertical: 20,
+    },
+     label: {
+        fontSize: 14,
+        color: '#7E7E7E',
+        marginBottom: 5,
+      },
 
+      gridContainer: {
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          width: '100%',
+          marginTop: 20,
+        },
+
+         gridItem: {
+            width: '40%',
+            alignItems: 'center',
+            margin: '5%',
+            padding: 20,
+            backgroundColor: '#FFD700',
+            borderRadius: 20,
+          },
+          deleteButton: {
+              backgroundColor: '#FF4500', // Rojo para el botón de eliminar cuenta
+            },
+            completedContainer: {
+                alignItems: 'center',
+                justifyContent: 'center',
+              },
+              completedText: {
+                color: '#2B2C5E',
+                fontSize: 18,
+                marginTop: 5, // Espacio entre el icono y el texto
+              },
 });

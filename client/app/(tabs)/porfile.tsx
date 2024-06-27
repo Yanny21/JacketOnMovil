@@ -1,12 +1,55 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
+import { styles } from './styles';
+
+const NavigationBar = ({ handleNavigation, iconColors }) => (
+  <View style={styles.navigationBar}>
+    <TouchableOpacity
+      style={styles.navButton}
+      onPress={() => handleNavigation('/asignaAct', 'viewList')}
+    >
+      <Icon name="view-list" size={30} color={iconColors.viewList} />
+    </TouchableOpacity>
+    <TouchableOpacity
+      style={styles.navButton}
+      onPress={() => handleNavigation('/screen3', 'alertCircle')}
+    >
+      <Icon name="alert-circle" size={30} color={iconColors.alertCircle} />
+    </TouchableOpacity>
+    <TouchableOpacity
+      style={styles.navButton}
+      onPress={() => handleNavigation('/screen3', 'accountGroup')}
+    >
+      <Icon name="account-group" size={30} color={iconColors.accountGroup} />
+    </TouchableOpacity>
+    <TouchableOpacity
+      style={styles.navButton}
+      onPress={() => handleNavigation('/profile', 'account')}
+    >
+      <Icon name="account" size={30} color={iconColors.account} />
+    </TouchableOpacity>
+    <TouchableOpacity
+      style={styles.navButton}
+      onPress={() => handleNavigation('/screen5', 'cloud')}
+    >
+      <Icon name="cloud" size={30} color={iconColors.cloud} />
+    </TouchableOpacity>
+  </View>
+);
 
 export default function MiCuenta() {
   const router = useRouter();
   const [userData, setUserData] = useState(null);
+  const [iconColors, setIconColors] = useState({
+    viewList: '#71728a',
+    alertCircle: '#71728a',
+    accountGroup: '#71728a',
+    account: '#71728a',
+    cloud: '#71728a',
+  });
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -14,7 +57,7 @@ export default function MiCuenta() {
         const storedUserData = await AsyncStorage.getItem('userData');
         if (storedUserData) {
           const parsedUserData = JSON.parse(storedUserData);
-          const response = await fetch(`http://192.168.1.74:3000/user-data?userId=${parsedUserData.user_id}`);
+          const response = await fetch(`http://10.13.0.68:3000/user-data?userId=${parsedUserData.user_id}`);
           const data = await response.json();
           if (response.ok) {
             setUserData(data.user);
@@ -34,9 +77,13 @@ export default function MiCuenta() {
     router.push('/editar');
   };
 
-  const handleNavigation = (screenName) => {
-    router.push(screenName);
-  };
+   const handleNavigation = (screen, icon) => {
+      router.push(screen); // Navegar a la pantalla específica
+      setIconColors(prevState => ({
+        ...prevState,
+        [icon]: '#F2E527', // Cambiar al color deseado al ser presionado
+      }));
+    };
 
   const handleLogout = async () => {
     try {
@@ -44,7 +91,7 @@ export default function MiCuenta() {
       if (userData) {
         const { user_id } = JSON.parse(userData);
 
-        const response = await fetch('http://192.168.1.74:3000/logout', {
+        const response = await fetch('http://10.13.0.68:3000/logout', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -94,7 +141,7 @@ export default function MiCuenta() {
       if (userData) {
         const { user_id } = JSON.parse(userData);
 
-        const response = await fetch('http://192.168.1.74:3000/user-delete', {
+        const response = await fetch('http://10.13.0.68:3000/user-delete', {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
@@ -160,129 +207,26 @@ export default function MiCuenta() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>MI CUENTA</Text>
-      <View style={styles.profileIconContainer}>
-        <Icon name="account-circle" size={100} color="#2B2C5E" />
-      </View>
-      {userData && (
-        <>
-          <Text style={styles.name}>{userData.user_name}</Text>
-          <Text style={styles.name}>{userData.user_last_name}</Text>
-          <View style={styles.infoContainer}>
-            <Text style={styles.label}>Correo: {userData.user_email}</Text>
-            <Text style={styles.label}>Nombre: {userData.user_name}</Text>
-            <Text style={styles.label}>Puesto: {userData.user_type}</Text>
-          </View>
-        </>
-      )}
-      <View style={styles.gridContainer}>{renderButtons()}</View>
-      <View style={styles.navigationBar}>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => handleNavigation('/screen1')}
-        >
-          <Icon name="view-list" size={30} color="#2B2C5E" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => handleNavigation('/screen2')}
-        >
-          <Icon name="alert-circle" size={30} color="#2B2C5E" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => handleNavigation('/screen3')}
-        >
-          <Icon name="account-group" size={30} color="#2B2C5E" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => handleNavigation('/screen4')}
-        >
-          <Icon name="account" size={30} color="#2B2C5E" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => handleNavigation('/screen5')}
-        >
-          <Icon name="cloud" size={30} color="#2B2C5E" />
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
-  );
-}
+      <View style={styles.containerV}>
 
-const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 40,
-    paddingHorizontal: 20,
-  },
-  title: {
-    fontSize: 24,
-    color: '#2B2C5E',
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  profileIconContainer: {
-    marginVertical: 20,
-  },
-  name: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#2B2C5E',
-  },
-  area: {
-    fontSize: 18,
-    color: '#2B2C5E',
-    marginVertical: 10,
-  },
-  infoContainer: {
-    alignItems: 'flex-start',
-    marginVertical: 20,
-  },
-  label: {
-    fontSize: 14,
-    color: '#7E7E7E',
-    marginBottom: 5,
-  },
-  buttonText: {
-    color: '#2B2C5E',
-    fontSize: 16,
-    textAlign: 'center',
-    marginTop: 5,
-  },
-  gridContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    width: '100%',
-    marginTop: 20,
-  },
-  gridItem: {
-    width: '40%',
-    alignItems: 'center',
-    margin: '5%',
-    padding: 20,
-    backgroundColor: '#FFD700',
-    borderRadius: 20,
-  },
-  deleteButton: {
-    backgroundColor: '#FF4500', // Rojo para el botón de eliminar cuenta
-  },
-  navigationBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-    marginTop: 300,
-    paddingBottom: 20,
-    borderTopColor: '#2B2C5E',
-  },
-  navButton: {
-    alignItems: 'center',
-  },
-});
+          <Text style={styles.headerV}>Editar perfil</Text>
+          <View style={styles.profileIconContainer}>
+            <Icon name="account-circle" size={100} color="#2B2C5E" />
+          </View>
+          {userData && (
+            <>
+              <Text style={styles.name}>{userData.user_name}</Text>
+              <Text style={styles.name}>{userData.user_last_name}</Text>
+              <View style={styles.infoContainer}>
+                <Text style={styles.label}>Correo: {userData.user_email}</Text>
+                <Text style={styles.label}>Nombre: {userData.user_name}</Text>
+                <Text style={styles.label}>Puesto: {userData.user_type}</Text>
+              </View>
+            </>
+          )}
+          <View style={styles.gridContainer}>{renderButtons()}</View>
+
+        <NavigationBar handleNavigation={handleNavigation} iconColors={iconColors} />
+      </View>
+    );
+}

@@ -1,27 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { useRouter } from 'expo-router';
 import { styles } from './styles';
 
-const employees = [
-  { id: '12312324', name: 'John Doe' },
-  { id: '12312324', name: 'John Doe' },
-  { id: '12312324', name: 'John Doe' },
-  { id: '12312324', name: 'John Doe' },
-  { id: '12312324', name: 'John Doe' },
-  { id: '12312324', name: 'John Doe' },
-  { id: '12312324', name: 'John Doe' },
-
-];
-
-export default function metricasEmp() {
+const AmbientalScreen = () => {
   const [iconColors, setIconColors] = useState({
-    viewList: '#71728a',
+    home: '#71728a',
     alertCircle: '#71728a',
-    accountGroup: '#71728a',
-    account: '#71728a',
-    cloud: '#71728a',
+    person: '#FFD700',
+    chatbubbles: '#71728a',
+    settings: '#71728a',
   });
 
   const router = useRouter();
@@ -36,55 +25,75 @@ export default function metricasEmp() {
 
   return (
     <View style={styles.containerV}>
-      <View style={styles.searchBarContainer}>
-        <Icon name="magnify" size={30} color="#F2E527" style={styles.searchIcon} />
-        <TextInput
-          style={styles.searchBar}
-          placeholder="Buscar..."
-          placeholderTextColor="#71728a"
-        />
+      <Text style={styles.employeeName}>John Doe</Text>
+
+      <View style={styles.metricsButtons}>
+        <TouchableOpacity style={styles.metricButtonActive}>
+          <Text style={styles.metricButtonTextActive}>Métricas ambientales</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.metricButtonInactive}>
+          <Text style={styles.metricButtonTextInactive}>Métricas vitales</Text>
+        </TouchableOpacity>
       </View>
-      <Text style={styles.headerV}>Metricas empleado</Text>
-      <ScrollView>
-        {employees.map((employee, index) => (
-          <View key={index} style={styles.employeeCard}>
-            <Text style={styles.employeeName}>{employee.name}</Text>
-            <Text style={styles.employeeId}>Empleado #{employee.id}</Text>
-          </View>
-        ))}
-      </ScrollView>
+
+      <View style={styles.metricsContainer}>
+        <View style={styles.metricTitles}>
+          <Text style={styles.metricTitle}>Temp</Text>
+          <Text style={styles.metricTitle}>O2</Text>
+          <Text style={styles.metricTitle}>Contaminación</Text>
+          <Text style={styles.metricTitle}>Humedad</Text>
+          <Text style={styles.metricTitle}>CO2</Text>
+        </View>
+
+        <View style={styles.chartContainer}>
+          {/* Placeholder for the chart */}
+          <View style={styles.chartPlaceholder} />
+        </View>
+
+        <View style={styles.metricsSummary}>
+          <Text style={styles.metricSummaryText}>34.1</Text>
+          <Text style={styles.metricSummaryText}>10%</Text>
+        </View>
+        <View style={styles.metricsSummaryLabels}>
+          <Text style={styles.metricSummaryLabel}>Avg temp</Text>
+          <Text style={styles.metricSummaryLabel}>Avg O2</Text>
+        </View>
+      </View>
+
       <View style={styles.navigationBar}>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('/asignaAct', 'viewList')} // Aquí se navega a la misma página
+          onPress={() => handleNavigation('/home', 'home')}
         >
-          <Icon name="view-list" size={30} color={iconColors.viewList} />
+          <Icon name="home" size={30} color={iconColors.home} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('/screen3', 'accountGroup')}
+          onPress={() => handleNavigation('/alert', 'alertCircle')}
         >
           <Icon name="alert-circle" size={30} color={iconColors.alertCircle} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('/screen3', 'accountGroup')}
+          onPress={() => handleNavigation('/profile', 'person')}
         >
-          <Icon name="account-group" size={30} color={iconColors.accountGroup} />
+          <Icon name="person" size={30} color={iconColors.person} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('/porfile', 'viewList')}
+          onPress={() => handleNavigation('/chat', 'chatbubbles')}
         >
-          <Icon name="account" size={30} color={iconColors.account} />
+          <Icon name="chatbubbles" size={30} color={iconColors.chatbubbles} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('/screen5', 'cloud')}
+          onPress={() => handleNavigation('/settings', 'settings')}
         >
-          <Icon name="cloud" size={30} color={iconColors.cloud} />
+          <Icon name="settings" size={30} color={iconColors.settings} />
         </TouchableOpacity>
       </View>
     </View>
   );
 };
+
+export default AmbientalScreen;
