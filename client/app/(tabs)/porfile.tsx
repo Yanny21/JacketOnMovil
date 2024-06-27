@@ -14,7 +14,7 @@ export default function MiCuenta() {
         const storedUserData = await AsyncStorage.getItem('userData');
         if (storedUserData) {
           const parsedUserData = JSON.parse(storedUserData);
-          const response = await fetch(`http://192.168.3.15:3000/user-data?userId=${parsedUserData.user_id}`);
+          const response = await fetch(`http://192.168.1.74:3000/user-data?userId=${parsedUserData.user_id}`);
           const data = await response.json();
           if (response.ok) {
             setUserData(data.user);
@@ -44,7 +44,7 @@ export default function MiCuenta() {
       if (userData) {
         const { user_id } = JSON.parse(userData);
 
-        const response = await fetch('http://192.168.3.15:3000/logout', {
+        const response = await fetch('http://192.168.1.74:3000/logout', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -94,7 +94,7 @@ export default function MiCuenta() {
       if (userData) {
         const { user_id } = JSON.parse(userData);
 
-        const response = await fetch('http://192.168.3.15:3000/user-delete', {
+        const response = await fetch('http://192.168.1.74:3000/user-delete', {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',

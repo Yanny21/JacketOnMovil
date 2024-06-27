@@ -161,4 +161,50 @@ export const styles = StyleSheet.create({
   navButton: {
     alignItems: 'center',
   },
+   assignButton: {
+      backgroundColor: '#F2E527',
+      padding: 10,
+      borderRadius: 10,
+      alignItems: 'center',
+      marginBottom: 20,
+    },
+    assignButtonText: {
+      color: '#fff',
+      fontSize: 16,
+      fontWeight: 'bold',
+    },
+    activityList: {
+        flex: 1,
+      },
+      activityCard: {
+        backgroundColor: '#f9f9f9',
+        padding: 15,
+        borderRadius: 10,
+        marginBottom: 10,
+      },
+      activityTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 5,
+      },
+      activityDescription: {
+        fontSize: 16,
+        marginBottom: 5,
+      },
+      activityDetail: {
+        fontSize: 14,
+        color: '#555',
+      },
+      activityContent: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      },
+     activityIcons: {
+       flexDirection: 'column',
+       justifyContent: 'space-between',
+       height: 80, // Ajusta esta altura según sea necesario
+     },
+
+
 });

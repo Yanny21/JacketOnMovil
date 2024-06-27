@@ -3,7 +3,6 @@ const mysql = require('mysql');
 const md5 = require('md5'); // Importar el módulo md5
 const crypto = require('crypto');
 
-
 const app = express();
 const port = 3000;
 
