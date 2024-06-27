@@ -40,7 +40,7 @@ export default function ChangePScreen() {
       if (userData) {
         const { user_id } = JSON.parse(userData);
 
-        const response = await fetch('http://192.168.3.15:3000/change-password', {
+        const response = await fetch('http://192.168.1.74:3000/change-password', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

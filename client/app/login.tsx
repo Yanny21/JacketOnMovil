@@ -13,11 +13,7 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-<<<<<<< HEAD
-      const response = await axios.post('http://10.13.14.29:3000/login', {
-=======
-      const response = await axios.post('http://192.168.3.15:3000/login', {
->>>>>>> e5720ce6bfb1251800a78719252565a2ee1be933
+      const response = await axios.post('http://192.168.1.74:3000/login', {
         user_email: user_email,
         user_password: user_password,
       });
@@ -32,7 +28,7 @@ export default function Login() {
         Alert.alert('Inicio de sesión exitoso', response.data.message);
 
         // Navegar a la pantalla de inicio después del inicio de sesión exitoso
-        router.push('/(tabs)/porfile');
+        router.push('/(tabs)/asignaAct');
       } else {
         Alert.alert('Error', response.data.message || 'Error al intentar iniciar sesión');
       }

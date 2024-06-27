@@ -12,7 +12,6 @@ const employees = [
   { id: '12312324', name: 'John Doe' },
   { id: '12312324', name: 'John Doe' },
   { id: '12312324', name: 'John Doe' },
-
 ];
 
 export default function AsignaAct() {
@@ -34,6 +33,13 @@ export default function AsignaAct() {
     }));
   };
 
+  const handleEmployeePress = (employeeName) => {
+    router.push({
+      pathname: '/detallesAct',
+      params: { name: employeeName },
+    });
+  };
+
   return (
     <View style={styles.containerV}>
       <View style={styles.searchBarContainer}>
@@ -47,10 +53,12 @@ export default function AsignaAct() {
       <Text style={styles.headerV}>Asignar Actividades</Text>
       <ScrollView>
         {employees.map((employee, index) => (
-          <View key={index} style={styles.employeeCard}>
-            <Text style={styles.employeeName}>{employee.name}</Text>
-            <Text style={styles.employeeId}>Empleado #{employee.id}</Text>
-          </View>
+          <TouchableOpacity key={index} onPress={() => handleEmployeePress(employee.name)}>
+            <View style={styles.employeeCard}>
+              <Text style={styles.employeeName}>{employee.name}</Text>
+              <Text style={styles.employeeId}>Empleado #{employee.id}</Text>
+            </View>
+          </TouchableOpacity>
         ))}
       </ScrollView>
       <View style={styles.navigationBar}>
