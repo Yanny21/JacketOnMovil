@@ -1,20 +1,13 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useRouter } from 'expo-router';
 import { styles } from './styles';
 
-const employees = [
-  { id: '12312324', name: 'John Doe' },
-  { id: '12312324', name: 'John Doe' },
-  { id: '12312324', name: 'John Doe' },
-  { id: '12312324', name: 'John Doe' },
-  { id: '12312324', name: 'John Doe' },
-  { id: '12312324', name: 'John Doe' },
-  { id: '12312324', name: 'John Doe' },
-];
-
 export default function AsignaAct() {
+  const [empleados, setEmpleados] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filteredEmpleados, setFilteredEmpleados] = useState([]);
   const [iconColors, setIconColors] = useState({
     viewList: '#71728a',
     alertCircle: '#71728a',
@@ -25,20 +18,55 @@ export default function AsignaAct() {
 
   const router = useRouter();
 
+  useEffect(() => {
+    fetchEmpleados();
+  }, []);
+
+  const fetchEmpleados = async () => {
+    try {
+      const response = await fetch('http://10.13.0.115:3000/empleados');
+      if (!response.ok) {
+        throw new Error('Error al obtener empleados');
+      }
+      const data = await response.json();
+      setEmpleados(data.empleados);
+      setFilteredEmpleados(data.empleados); // Inicialmente, muestra todos los empleados
+    } catch (error) {
+      console.error('Error al obtener empleados:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleNavigation = (screen, icon) => {
-    router.push(screen); // Navegar a la pantalla específica
+    router.push(screen);
     setIconColors(prevState => ({
       ...prevState,
-      [icon]: '#F2E527', // Cambiar al color deseado al ser presionado
+      [icon]: '#F2E527',
     }));
   };
 
-  const handleEmployeePress = (employeeName) => {
+  const handleEmployeePress = (employee) => {
     router.push({
       pathname: '/detallesAct',
-      params: { name: employeeName },
+      params: {
+        name: `${employee.nom_usu} ${employee.app_usu}`,
+        id_usu: employee.id_usu,
+      },
     });
   };
+
+  const handleSearch = (text) => {
+    const lowerCaseQuery = text.toLowerCase();
+    const filteredData = empleados.filter((empleado) =>
+      empleado.nom_usu.toLowerCase().includes(lowerCaseQuery) || empleado.app_usu.toLowerCase().includes(lowerCaseQuery)
+    );
+    setFilteredEmpleados(filteredData);
+  };
+
+  if (loading) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
+  }
 
   return (
     <View style={styles.containerV}>
@@ -48,29 +76,34 @@ export default function AsignaAct() {
           style={styles.searchBar}
           placeholder="Buscar..."
           placeholderTextColor="#71728a"
+          onChangeText={handleSearch}
         />
       </View>
       <Text style={styles.headerV}>Asignar Actividades</Text>
-      <ScrollView>
-        {employees.map((employee, index) => (
-          <TouchableOpacity key={index} onPress={() => handleEmployeePress(employee.name)}>
-            <View style={styles.employeeCard}>
-              <Text style={styles.employeeName}>{employee.name}</Text>
-              <Text style={styles.employeeId}>Empleado #{employee.id}</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+      {loading ? (
+        <ActivityIndicator size="large" color="#F2E527" />
+      ) : (
+        <ScrollView style={styles.employeeList}>
+          {filteredEmpleados.map((employee, index) => (
+            <TouchableOpacity key={index} onPress={() => handleEmployeePress(employee)}>
+              <View style={styles.employeeCard}>
+                <Text style={styles.employeeName}>{employee.nom_usu} {employee.app_usu}</Text>
+                <Text style={styles.employeeId}>Empleado #{employee.id_usu}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      )}
       <View style={styles.navigationBar}>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('/asignaAct', 'viewList')} // Aquí se navega a la misma página
+          onPress={() => handleNavigation('/asignaAct', 'viewList')}
         >
           <Icon name="view-list" size={30} color={iconColors.viewList} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('/screen3', 'accountGroup')}
+          onPress={() => handleNavigation('/screen3', 'alertCircle')}
         >
           <Icon name="alert-circle" size={30} color={iconColors.alertCircle} />
         </TouchableOpacity>
@@ -82,7 +115,7 @@ export default function AsignaAct() {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('/porfile', 'viewList')}
+          onPress={() => handleNavigation('/porfile', 'account')}
         >
           <Icon name="account" size={30} color={iconColors.account} />
         </TouchableOpacity>
@@ -95,4 +128,4 @@ export default function AsignaAct() {
       </View>
     </View>
   );
-};
+}

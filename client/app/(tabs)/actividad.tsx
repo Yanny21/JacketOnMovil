@@ -1,15 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback, Text } from 'react-native';
+import { View, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback, Text, Alert } from 'react-native';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { FontAwesome, Feather, MaterialIcons } from '@expo/vector-icons'; // Importar iconos necesarios
-import { styles } from './styles'; // Importar estilos
+import { FontAwesome, Feather, MaterialIcons } from '@expo/vector-icons';
+import { styles } from './styles';
+import { useLocalSearchParams } from 'expo-router';
 
-const Actividades = ({ navigation }) => {
+const Actividades = () => {
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [selectedDate, setSelectedDate] = useState('');
   const [isDatePickerVisible2, setDatePickerVisibility2] = useState(false);
   const [selectedDate2, setSelectedDate2] = useState('');
+  const { id_usu, name, id_act } = useLocalSearchParams();
+  const [actividad, setActividad] = useState('');
+  const [descripcion, setDescripcion] = useState('');
+  const [area, setArea] = useState('');
+
+  // Nuevo estado para almacenar los detalles de la actividad
+  const [activityDetails, setActivityDetails] = useState(null);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
@@ -19,11 +27,35 @@ const Actividades = ({ navigation }) => {
       setKeyboardVisible(false);
     });
 
+    // Obtener detalles de la actividad cuando el componente se monte
+    fetchActivityDetails();
+
     return () => {
       keyboardDidHideListener.remove();
       keyboardDidShowListener.remove();
     };
   }, []);
+
+  const fetchActivityDetails = async () => {
+    try {
+      const response = await fetch(`http://10.13.0.115:3000/actividades/${id_act}`);
+      const data = await response.json();
+      if (response.ok) {
+        setActivityDetails(data);
+        // Llenar los campos con los detalles obtenidos
+        setActividad(data.actividad);
+        setDescripcion(data.descripcion);
+        setArea(data.area);
+        setSelectedDate(data.fech_ini);
+        setSelectedDate2(data.fech_fin);
+      } else {
+        Alert.alert('Error', 'No se pudo obtener los detalles de la actividad');
+      }
+    } catch (error) {
+      console.error('Error al obtener los detalles de la actividad:', error);
+      Alert.alert('Error', 'Error al obtener los detalles de la actividad');
+    }
+  };
 
   const handleIconPress = () => {
     console.log('Icono presionado');
@@ -38,7 +70,8 @@ const Actividades = ({ navigation }) => {
   };
 
   const handleConfirm = (date) => {
-    setSelectedDate(date.toLocaleDateString());
+    const formattedDate = date.toISOString().split('T')[0];
+    setSelectedDate(formattedDate);
     hideDatePicker();
   };
 
@@ -51,11 +84,57 @@ const Actividades = ({ navigation }) => {
   };
 
   const handleConfirm2 = (date) => {
-    setSelectedDate2(date.toLocaleDateString());
+    const formattedDate = date.toISOString().split('T')[0];
+    setSelectedDate2(formattedDate);
     hideDatePicker2();
   };
 
-  const nombre = "Yanny Moreno";
+  const handleAssign = async () => {
+    try {
+      const response = await fetch('http://10.13.0.115:3000/insertar-actividad', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          actividad: actividad,
+          descripcion: descripcion,
+          area: area,
+          fech_ini: selectedDate,
+          fech_fin: selectedDate2,
+          id_usu_asignado: id_usu,
+          id_usu_que_asigno: 4,
+        }),
+      });
+
+      const data = await response.json();
+      console.log('Respuesta del servidor:', data);
+
+      if (response.ok) {
+        Alert.alert(
+          'Éxito',
+          'Actividad asignada correctamente',
+          [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
+          { cancelable: false }
+        );
+      } else {
+        Alert.alert(
+          'Error',
+          'Error al asignar la actividad',
+          [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
+          { cancelable: false }
+        );
+      }
+    } catch (error) {
+      console.error('Error al enviar la solicitud:', error);
+      Alert.alert(
+        'Error',
+        'Error al enviar la solicitud',
+        [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
+        { cancelable: false }
+      );
+    }
+  };
 
   return (
     <KeyboardAvoidingView
@@ -69,24 +148,38 @@ const Actividades = ({ navigation }) => {
               <FontAwesome name="times" size={22} color="#F2E527" />
             </TouchableOpacity>
             <Text style={styles.title}>Asignar actividad para:</Text>
-            <Text style={styles.subtitle}>{nombre}</Text>
+            <Text style={styles.subtitle}>{name}</Text>
             <View style={styles.inputContainer}>
               <TextInput
                 style={styles.input}
                 placeholder="Nombre de la actividad"
                 placeholderTextColor="#A9A9A9"
+                value={actividad}
+                onChangeText={setActividad}
               />
               <Feather name="edit" size={24} color="#F2E527" style={styles.icon} />
             </View>
             <View style={styles.inputContainer}>
               <TextInput
-                style={[styles.input, styles.textArea]} // Estilo para el área de texto más grande
+                style={[styles.input, styles.textArea]}
                 multiline={true}
-                numberOfLines={4} // Número de líneas visibles inicialmente
+                numberOfLines={4}
                 placeholder="Descripción"
                 placeholderTextColor="#A9A9A9"
+                value={descripcion}
+                onChangeText={setDescripcion}
               />
               <MaterialIcons name="insert-drive-file" size={24} color="#F2E527" style={styles.icon} />
+            </View>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="Area"
+                placeholderTextColor="#A9A9A9"
+                value={area}
+                onChangeText={setArea}
+              />
+              <MaterialIcons name="edit" size={24} color="#F2E527" style={styles.icon} />
             </View>
             <View style={styles.inputContainer}>
               <TextInput
@@ -112,7 +205,7 @@ const Actividades = ({ navigation }) => {
                 <FontAwesome name="calendar" size={22} color="#F2E527" style={styles.icon} />
               </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.Button}>
+            <TouchableOpacity style={styles.Button} onPress={handleAssign}>
               <Text style={styles.ButtonText}>Asignar</Text>
             </TouchableOpacity>
           </View>
@@ -132,6 +225,6 @@ const Actividades = ({ navigation }) => {
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
-}
+};
 
 export default Actividades;

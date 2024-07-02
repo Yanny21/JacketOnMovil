@@ -12,10 +12,12 @@ const db = mysql.createPool({
   connectionLimit: 10,
   host: 'localhost',
   user: 'root',
-  password: 'Moreno0310SM21',
+  password: 'Fernanda0202',
   database: 'jacketon',
   port: 3306,
 });
+
+
 
 //prueba de conexion a la bdd
 app.get('/connect-db', (req, res) => {
@@ -45,6 +47,7 @@ app.get('/connect-db', (req, res) => {
     });
   });
 });
+
 
 
 // Endpoint para verificar las credenciales de inicio de sesión
@@ -330,6 +333,159 @@ app.post('/signup', (req, res) => {
       );
   });
 });
+
+//lista de empleados
+app.get('/empleados', (req, res) => {
+  const query = 'SELECT id_usu, nom_usu, app_usu FROM usuarios WHERE tipo_usu = "empleado"';
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error al obtener empleados:', err);
+      res.status(500).json({ error: 'Error al obtener empleados' });
+      return;
+    }
+    res.json({ empleados: results });
+  });
+});
+
+
+// Endpoint para buscar empleados por nombre
+app.get('/empleados/buscar', (req, res) => {
+  const { nombre } = req.query;
+  if (!nombre) {
+    return res.status(400).json({ error: 'Se requiere un parámetro de búsqueda (nombre)' });
+  }
+  const sql = `SELECT * FROM empleados WHERE nombre LIKE '%${nombre}%'`;
+  db.query(sql, (err, result) => {
+    if (err) {
+      res.status(500).json({ error: 'Error al buscar empleados' });
+      throw err;
+    }
+    res.json({ empleados: result });
+  });
+});
+
+//detalles actividad
+app.get('/actividades/:id_usu', (req, res) => {
+  const id_usu = req.params.id_usu;
+  const query = `
+    SELECT actividades.*, usuarios.nom_usu, usuarios.app_usu
+    FROM actividades
+    INNER JOIN usuarios ON actividades.id_usu_asignado = usuarios.id_usu
+    WHERE actividades.id_usu_asignado = ?
+  `;
+  db.query(query, [id_usu], (err, results) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      res.status(500).json({ error: 'Error fetching activities' });
+    } else {
+      console.log('Query results:', results);
+      res.json(results);
+    }
+  });
+});
+
+//editar actividad
+app.get('/edit-act/:id', (req, res) => {
+  const id = req.params.id;
+const query = `
+  SELECT *
+  FROM actividades
+  WHERE id_act = ?
+`;
+  db.query(query, [id], (err, results) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      res.status(500).json({ error: 'Error fetching activities' });
+    } else {
+      console.log('Query resultades:', results);
+      res.json(results);
+    }
+  });
+});
+
+
+// Ruta para insertar actividad
+app.post('/insertar-actividad', (req, res) => {
+  const { actividad, descripcion, area, fech_ini, fech_fin, id_usu_asignado, id_usu_que_asigno } = req.body;
+
+  // Formatear fechas para MySQL
+  const formattedFechLim = new Date(fech_fin).toISOString().slice(0, 19).replace('T', ' '); // Fecha límite
+  const formattedFechAsig = new Date().toISOString().slice(0, 19).replace('T', ' '); // Fecha asignada (fecha actual)
+
+  const sql = 'INSERT INTO actividades (actividad, descripcion, fech_lim, fech_asig, area, id_usu_asignado, id_usu_que_asigno) VALUES (?, ?, ?, ?, ?, ?, ?)';
+  const values = [actividad, descripcion, formattedFechLim, formattedFechAsig, area, id_usu_asignado, id_usu_que_asigno];
+
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error('Error al insertar actividad:', err);
+      res.status(500).json({ message: 'Error al insertar actividad' });
+      return;
+    }
+    console.log('Actividad insertada correctamente');
+    res.json({ message: 'Actividad insertada correctamente' });
+  });
+});
+
+
+// Ruta para eliminar una actividad por su id_act
+app.delete('/actividades/:id', (req, res) => {
+  const idAct = req.params.id;
+
+  // Query SQL para eliminar la actividad
+  const sql = 'DELETE FROM actividades WHERE id_act = ?';
+
+  db.query(sql, [idAct], (err, result) => {
+    if (err) {
+      console.error('Error al eliminar la actividad:', err);
+      res.status(500).json({ error: 'Error interno al eliminar la actividad' });
+    } else {
+      if (result.affectedRows > 0) {
+        res.status(200).json({ message: `Actividad con ID ${idAct} eliminada correctamente` });
+      } else {
+        res.status(404).json({ error: `No se encontró actividad con ID ${idAct}` });
+      }
+    }
+  });
+});
+
+
+// Obtener detalles de una actividad por su ID
+app.get('/api/actividades/:id_act', (req, res) => {
+  const id_act = req.params.id_act;
+  const query = 'SELECT * FROM actividades WHERE id_act = ?';
+
+  db.query(query, [id_act], (err, result) => {
+    if (err) {
+      console.error('Error al obtener los detalles de la actividad:', err);
+      res.status(500).json({ error: 'Error al obtener los detalles de la actividad' });
+      return;
+    }
+
+    if (result.length === 0) {
+      res.status(404).json({ error: 'Actividad no encontrada' });
+    } else {
+      res.json(result[0]);
+    }
+  });
+});
+
+// Actualizar detalles de una actividad por su ID
+app.put('/api/actividades/:id_act', (req, res) => {
+  const id_act = req.params.id_act;
+  const { actividad, descripcion, area, fech_ini, fech_fin, id_usu_asignado, id_usu_que_asigno } = req.body;
+  const query = `UPDATE actividades SET actividad = ?, descripcion = ?, area = ?, fech_ini = ?, fech_fin = ?, id_usu_asignado = ?, id_usu_que_asigno = ? WHERE id_act = ?`;
+
+  db.query(query, [actividad, descripcion, area, fech_ini, fech_fin, id_usu_asignado, id_usu_que_asigno, id_act], (err, result) => {
+    if (err) {
+      console.error('Error al actualizar la actividad:', err);
+      res.status(500).json({ error: 'Error al actualizar la actividad' });
+      return;
+    }
+
+    res.json({ message: 'Actividad actualizada correctamente' });
+  });
+});
+
 
 
 app.listen(port, () => {

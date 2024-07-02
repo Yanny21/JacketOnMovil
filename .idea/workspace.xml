@@ -5,7 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="87f9a2f9-c014-405b-88d6-313620096ad5" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/.expo/types/router.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/.expo/types/router.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/(tabs)/actividad.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/(tabs)/actividad.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/(tabs)/asignaAct.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/(tabs)/asignaAct.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/(tabs)/detallesAct.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/(tabs)/detallesAct.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/(tabs)/editAct.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/(tabs)/editAct.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/(tabs)/editar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/(tabs)/editar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/(tabs)/password.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/(tabs)/password.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/(tabs)/porfile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/(tabs)/porfile.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/_layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/login.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/registro.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/registro.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/expo-env.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/expo-env.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,20 +44,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "jacketOn-fer",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/JacketOnMovil",
-    "settings.editor.selected.configurable": "com.google.gct.login2.settings.GoogleLoginApplicationSettingsConfigurableProvider"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;jacketOn-fer&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/JacketOnMovil&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.google.gct.login2.settings.GoogleLoginApplicationSettingsConfigurableProvider&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\JacketOnMovil\client" />
@@ -58,5 +73,16 @@
       <updated>1718985545858</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
