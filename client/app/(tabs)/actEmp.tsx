@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useRouter } from 'expo-router';
@@ -32,27 +32,15 @@ const activities = [
 ];
 
 export default function detEmpAct() {
-  const [iconColors, setIconColors] = useState({
-    viewList: '#71728a',
-    alertCircle: '#71728a',
-    accountGroup: '#71728a',
-    account: '#71728a',
-    cloud: '#71728a',
-  });
-
   const router = useRouter();
 
-  const handleNavigation = (screen, icon) => {
+  const handleNavigation = (screen) => {
     router.push(screen); // Navegar a la pantalla específica
-    setIconColors(prevState => ({
-      ...prevState,
-      [icon]: '#F2E527', // Cambiar al color deseado al ser presionado
-    }));
   };
 
   return (
     <View style={styles.containerV}>
-      <Text style={styles.headerV}>Actividades de: John Doe</Text>
+      <Text style={styles.headerV}>Tus actividades</Text>
       <ScrollView style={styles.activityList}>
         {activities.map(activity => (
           <View key={activity.id} style={styles.activityCard}>
@@ -66,11 +54,14 @@ export default function detEmpAct() {
                 <Text style={styles.activityDetail}>Fecha de finalización: {activity.endDate}</Text>
               </View>
               <View style={styles.activityIcons}>
-             <TouchableOpacity onPress={() =>(activity.id)} style={styles.completedContainer}>
-               <Icon name="check-bold" size={40} color="#F2E527" />
-               <Text style={styles.completedText}>Realizado</Text>
-             </TouchableOpacity>
-
+                <TouchableOpacity onPress={() => console.log(activity.id)} style={styles.completedContainer}>
+                  <Icon name="arrow-right-circle" size={30} color="#F2E527" />
+                  <Text style={styles.completedText}>Comenzar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => console.log(activity.id)} style={styles.completedContainer}>
+                  <Icon name="check-bold" size={30} color="#F2E527" />
+                  <Text style={styles.completedText}>Realizado</Text>
+                </TouchableOpacity>
               </View>
             </View>
           </View>
@@ -79,33 +70,26 @@ export default function detEmpAct() {
       <View style={styles.navigationBar}>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('/asignaAct', 'viewList')}
         >
-          <Icon name="view-list" size={30} color={iconColors.viewList} />
+          <Icon name="view-list" size={30} color="#F2E527" />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('/screen3', 'accountGroup')}
+          onPress={() => handleNavigation('/grafyrepEmp')}
         >
-          <Icon name="alert-circle" size={30} color={iconColors.alertCircle} />
+          <Icon name="alert-circle" size={30} color="#71728a" />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('/screen3', 'accountGroup')}
+          onPress={() => handleNavigation('/porfile')}
         >
-          <Icon name="account-group" size={30} color={iconColors.accountGroup} />
+          <Icon name="account" size={30} color="#71728a" />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('/porfile', 'account')}
+          onPress={() => handleNavigation('/screen5')}
         >
-          <Icon name="account" size={30} color={iconColors.account} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => handleNavigation('/screen5', 'cloud')}
-        >
-          <Icon name="cloud" size={30} color={iconColors.cloud} />
+          <Icon name="cloud" size={30} color="#71728a" />
         </TouchableOpacity>
       </View>
     </View>

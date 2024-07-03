@@ -5,37 +5,36 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { styles } from './styles';
 
-const NavigationBar = ({ handleNavigation, iconColors }) => (
+const NavigationBar = ({ handleNavigation }) => (
   <View style={styles.navigationBar}>
     <TouchableOpacity
       style={styles.navButton}
-      onPress={() => handleNavigation('/asignaAct', 'viewList')}
+      onPress={() => handleNavigation('/asignaAct')}
     >
-      <Icon name="view-list" size={30} color={iconColors.viewList} />
+      <Icon name="view-list" size={30} color="#71728a" />
     </TouchableOpacity>
     <TouchableOpacity
       style={styles.navButton}
-      onPress={() => handleNavigation('/screen3', 'alertCircle')}
+      onPress={() => handleNavigation('/graficasyrep')}
     >
-      <Icon name="alert-circle" size={30} color={iconColors.alertCircle} />
+      <Icon name="alert-circle" size={30} color="#71728a" />
     </TouchableOpacity>
     <TouchableOpacity
       style={styles.navButton}
-      onPress={() => handleNavigation('/screen3', 'accountGroup')}
+      onPress={() => handleNavigation('/metricas')}
     >
-      <Icon name="account-group" size={30} color={iconColors.accountGroup} />
+      <Icon name="account-group" size={30} color="#71728a" />
     </TouchableOpacity>
     <TouchableOpacity
       style={styles.navButton}
-      onPress={() => handleNavigation('/profile', 'account')}
     >
-      <Icon name="account" size={30} color={iconColors.account} />
+      <Icon name="account" size={30} color="#F2E527" />
     </TouchableOpacity>
     <TouchableOpacity
       style={styles.navButton}
-      onPress={() => handleNavigation('/screen5', 'cloud')}
+      onPress={() => handleNavigation('/screen5')}
     >
-      <Icon name="cloud" size={30} color={iconColors.cloud} />
+      <Icon name="cloud" size={30} color="#71728a" />
     </TouchableOpacity>
   </View>
 );
@@ -43,13 +42,6 @@ const NavigationBar = ({ handleNavigation, iconColors }) => (
 export default function MiCuenta() {
   const router = useRouter();
   const [userData, setUserData] = useState(null);
-  const [iconColors, setIconColors] = useState({
-    viewList: '#71728a',
-    alertCircle: '#71728a',
-    accountGroup: '#71728a',
-    account: '#71728a',
-    cloud: '#71728a',
-  });
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -57,7 +49,7 @@ export default function MiCuenta() {
         const storedUserData = await AsyncStorage.getItem('userData');
         if (storedUserData) {
           const parsedUserData = JSON.parse(storedUserData);
-          const response = await fetch(`http://10.13.0.68:3000/user-data?userId=${parsedUserData.user_id}`);
+          const response = await fetch(`http://10.13.6.131:3000/user-data?userId=${parsedUserData.user_id}`);
           const data = await response.json();
           if (response.ok) {
             setUserData(data.user);
@@ -77,13 +69,9 @@ export default function MiCuenta() {
     router.push('/editar');
   };
 
-   const handleNavigation = (screen, icon) => {
-      router.push(screen); // Navegar a la pantalla específica
-      setIconColors(prevState => ({
-        ...prevState,
-        [icon]: '#F2E527', // Cambiar al color deseado al ser presionado
-      }));
-    };
+  const handleNavigation = (screen) => {
+    router.push(screen); // Navegar a la pantalla específica
+  };
 
   const handleLogout = async () => {
     try {
@@ -91,7 +79,7 @@ export default function MiCuenta() {
       if (userData) {
         const { user_id } = JSON.parse(userData);
 
-        const response = await fetch('http://10.13.0.68:3000/logout', {
+        const response = await fetch('http://10.13.6.131:3000/logout', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -141,7 +129,7 @@ export default function MiCuenta() {
       if (userData) {
         const { user_id } = JSON.parse(userData);
 
-        const response = await fetch('http://10.13.0.68:3000/user-delete', {
+        const response = await fetch('http://10.13.6.131:3000/user-delete', {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
@@ -207,26 +195,25 @@ export default function MiCuenta() {
   };
 
   return (
-      <View style={styles.containerV}>
-
-          <Text style={styles.headerV}>Editar perfil</Text>
-          <View style={styles.profileIconContainer}>
-            <Icon name="account-circle" size={100} color="#2B2C5E" />
-          </View>
-          {userData && (
-            <>
-              <Text style={styles.name}>{userData.user_name}</Text>
-              <Text style={styles.name}>{userData.user_last_name}</Text>
-              <View style={styles.infoContainer}>
-                <Text style={styles.label}>Correo: {userData.user_email}</Text>
-                <Text style={styles.label}>Nombre: {userData.user_name}</Text>
-                <Text style={styles.label}>Puesto: {userData.user_type}</Text>
-              </View>
-            </>
-          )}
-          <View style={styles.gridContainer}>{renderButtons()}</View>
-
-        <NavigationBar handleNavigation={handleNavigation} iconColors={iconColors} />
+    <View style={styles.containerV}>
+      <Text style={styles.headerV}>Editar perfil</Text>
+      <View style={styles.profileIconContainer}>
+        <Icon name="account-hard-hat" size={100} color="#2B2C5E" />
       </View>
-    );
+      {userData && (
+        <>
+          <Text style={styles.name}>{userData.user_name}</Text>
+          <Text style={styles.name}>{userData.user_last_name}</Text>
+          <View style={styles.infoContainer}>
+            <Text style={styles.label}>Correo: {userData.user_email}</Text>
+            <Text style={styles.label}>Nombre: {userData.user_name}</Text>
+            <Text style={styles.label}>Puesto: {userData.user_type}</Text>
+          </View>
+        </>
+      )}
+      <View style={styles.gridContainer}>{renderButtons()}</View>
+
+      <NavigationBar handleNavigation={handleNavigation} />
+    </View>
+  );
 }
