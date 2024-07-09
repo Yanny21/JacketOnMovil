@@ -1,17 +1,14 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { styles } from './styles';
 
-const employees = [
-  { id: '12312324', name: 'John Doe' },
-  { id: '12312324', name: 'John Doe' },
-  { id: '12312324', name: 'John Doe' },
-  { id: '12312324', name: 'John Doe' },
-  { id: '12312324', name: 'John Doe' },
-  { id: '12312324', name: 'John Doe' }
-];
-
-export default function AsignaAct({ navigation }) {
+export default function AsignaAct() {
+  const [empleados, setEmpleados] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filteredEmpleados, setFilteredEmpleados] = useState([]);
   const [iconColors, setIconColors] = useState({
     viewList: '#71728a',
     alertCircle: '#71728a',
@@ -19,114 +16,150 @@ export default function AsignaAct({ navigation }) {
     account: '#71728a',
     cloud: '#71728a',
   });
+  const [userType, setUserType] = useState(null); // Estado para almacenar el tipo de usuario
+
+  const router = useRouter();
+
+  useEffect(() => {
+    const checkUserType = async () => {
+      try {
+        // Obtener los datos del usuario desde AsyncStorage
+        const userData = await AsyncStorage.getItem('userData');
+        if (userData) {
+          const { user_type } = JSON.parse(userData);
+          setUserType(user_type);
+          if (user_type !== 'supervisor') {
+            // Redirigir a /actividad si el tipo de usuario no es admin o supervisor
+            router.push('/actividad');
+            return;
+          }
+        } else {
+          // Redirigir a /actividad si no hay datos de usuario en AsyncStorage
+          router.push('/actividad');
+          return;
+        }
+        // Si el tipo de usuario es válido, entonces obtener los empleados
+        fetchEmpleados();
+      } catch (error) {
+        console.error('Error al obtener el tipo de usuario:', error);
+        // En caso de error, redirigir a /actividad
+        router.push('/actividad');
+      }
+    };
+
+    checkUserType();
+  }, []);
+
+  const fetchEmpleados = async () => {
+    try {
+      const response = await fetch('http://192.168.3.30:3000/empleados');
+      if (!response.ok) {
+        throw new Error('Error al obtener empleados');
+      }
+      const data = await response.json();
+      setEmpleados(data.empleados);
+      setFilteredEmpleados(data.empleados); // Inicialmente, muestra todos los empleados
+    } catch (error) {
+      console.error('Error al obtener empleados:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleNavigation = (screen, icon) => {
-    // Navegar a la pantalla específica
-    navigation.navigate(screen);
-    // Cambiar el color del icono al ser presionado
+    router.push(screen);
     setIconColors(prevState => ({
       ...prevState,
-      [icon]: '#F2E527', // Cambiar al color deseado al ser presionado
+      [icon]: '#F2E527',
     }));
   };
 
+  const handleEmployeePress = (employee) => {
+    router.push({
+      pathname: '/detallesAct',
+      params: {
+        name: `${employee.nom_usu} ${employee.app_usu}`,
+        id_emp: employee.id_usu,
+      },
+    });
+  };
+
+  const handleSearch = (text) => {
+    const lowerCaseQuery = text.toLowerCase();
+    const filteredData = empleados.filter((empleado) =>
+      empleado.nom_usu.toLowerCase().includes(lowerCaseQuery) || empleado.app_usu.toLowerCase().includes(lowerCaseQuery)
+    );
+    setFilteredEmpleados(filteredData);
+  };
+
+  if (loading) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
+  }
+
+  if (userType !== 'admin' && userType !== 'supervisor') {
+    // Redirigir a /actividad si el tipo de usuario no es admin o supervisor
+    router.push('/actividad');
+    return null; // Asegurarse de no renderizar nada si no es admin o supervisor
+  }
+
   return (
-    <View style={styles.container}>
-      <TextInput
-        style={styles.searchBar}
-        placeholder="Buscar..."
-      />
-      <Text style={styles.header}>Asignar Actividades</Text>
-      <ScrollView>
-        {employees.map((employee, index) => (
-          <View key={index} style={styles.employeeCard}>
-            <Text style={styles.employeeName}>{employee.name}</Text>
-            <Text style={styles.employeeId}>Empleado #{employee.id}</Text>
-          </View>
-        ))}
-      </ScrollView>
+    <View style={styles.containerV}>
+      <View style={styles.searchBarContainer}>
+        <Icon name="magnify" size={30} color="#F2E527" style={styles.searchIcon} />
+        <TextInput
+          style={styles.searchBar}
+          placeholder="Buscar..."
+          placeholderTextColor="#71728a"
+          onChangeText={handleSearch}
+        />
+      </View>
+      <Text style={styles.headerV}>Asignar Actividades</Text>
+      {loading ? (
+        <ActivityIndicator size="large" color="#F2E527" />
+      ) : (
+        <ScrollView style={styles.employeeList}>
+          {filteredEmpleados.map((employee, index) => (
+            <TouchableOpacity key={index} onPress={() => handleEmployeePress(employee)}>
+              <View style={styles.employeeCard}>
+                <Text style={styles.employeeName}>{employee.nom_usu} {employee.app_usu}</Text>
+                <Text style={styles.employeeId}>Empleado #{employee.id_usu}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      )}
       <View style={styles.navigationBar}>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('Screen1', 'viewList')}
+          onPress={() => handleNavigation('/asignaAct', 'viewList')}
         >
           <Icon name="view-list" size={30} color={iconColors.viewList} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('Screen2', 'alertCircle')}
+          onPress={() => handleNavigation('/screen3', 'alertCircle')}
         >
           <Icon name="alert-circle" size={30} color={iconColors.alertCircle} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('Screen3', 'accountGroup')}
+          onPress={() => handleNavigation('/screen3', 'accountGroup')}
         >
           <Icon name="account-group" size={30} color={iconColors.accountGroup} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('Screen4', 'account')}
+          onPress={() => handleNavigation('/porfile', 'account')}
         >
           <Icon name="account" size={30} color={iconColors.account} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('Screen5', 'cloud')}
+          onPress={() => handleNavigation('/screen5', 'cloud')}
         >
           <Icon name="cloud" size={30} color={iconColors.cloud} />
         </TouchableOpacity>
       </View>
     </View>
   );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    padding: 20,
-  },
-  searchBar: {
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 20,
-    paddingLeft: 15,
-    marginBottom: 20,
-    marginTop: 30,
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 40,
-    marginTop: 40,
-    textAlign: 'center',
-  },
-  employeeCard: {
-    marginBottom: 30,
-  },
-  employeeName: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  employeeId: {
-    fontSize: 16,
-    color: '#888',
-  },
-  navigationBar: {
-    backgroundColor: '#2B2C5E',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-    marginTop: 300,
-    paddingTop: 20,
-    paddingBottom: 20, // Añade espacio abajo de la barra de navegación
-    borderTopColor: '#2B2C5E', // Color de la línea superior
-  },
-  navButton: {
-    alignItems: 'center',
-  },
-});
-
-export default AsignaAct;
+}

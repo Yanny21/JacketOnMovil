@@ -2,12 +2,175 @@ const express = require('express');
 const mysql = require('mysql');
 const md5 = require('md5'); // Importar el módulo md5
 const crypto = require('crypto');
-
+const router = express.Router();
 
 const app = express();
 const port = 3000;
 
 app.use(express.json());
+
+//detalles actividad por id de empleado al que se le asignaron
+app.get('/actividades/:id_emp', (req, res) => {
+  const id_emp = req.params.id_emp;
+  const query = `
+      SELECT id_act, actividad, fech_lim, fech_asig, fech_ini, fech_fin, area
+      FROM actividades
+      WHERE id_usu_asignado = ?
+    `;
+
+  db.query(query, [id_emp], (err, results) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      res.status(500).json({ error: 'Error fetching activities' });
+    } else {
+      console.log('Query results:', results);
+      res.json(results);
+    }
+  });
+});
+
+// Endpoint para eliminar una actividad por su ID
+app.delete('/delete-act/:id', (req, res) => {
+  const id = req.params.id;
+  const query = `
+      DELETE FROM actividades
+      WHERE id_act = ?
+    `;
+
+  db.query(query, [id], (err, results) => {
+    if (err) {
+      console.error('Error ejecutando la consulta:', err);
+      res.status(500).json({ error: 'Error al eliminar la actividad' });
+    } else {
+      if (results.affectedRows > 0) {
+        console.log('Actividad eliminada:', id);
+        res.json({ message: 'Actividad eliminada correctamente' });
+      } else {
+        console.log('No se encontró la actividad con ID:', id);
+        res.status(404).json({ error: 'Actividad no encontrada' });
+      }
+    }
+  });
+});
+
+// Endpoint para insertar una nueva actividad
+app.post('/insertar-actividad', (req, res) => {
+  const {
+    actividad,
+    descripcion,
+    area,
+    fech_ini,
+    fech_fin,
+    id_usu_asignado,
+    id_usu_que_asigno,
+    user_type
+  } = req.body;
+
+
+  // Verificación del tipo de usuario
+  if (user_type !== 'supervisor') {
+    return res.status(403).json({ error: 'No tienes permisos para realizar esta acción' });
+  }
+
+  const query = `
+      INSERT INTO actividades (actividad, descripcion, area, fech_ini, fech_fin, id_usu_asignado, id_usu_que_asigno)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `;
+
+  db.query(query, [actividad, descripcion, area, fech_ini, fech_fin, id_usu_asignado, id_usu_que_asigno], (err, results) => {
+    if (err) {
+      console.error('Error ejecutando la consulta:', err);
+      res.status(500).json({ error: 'Error al insertar la actividad' });
+    } else {
+      console.log('Actividad insertada:', results.insertId);
+      res.status(201).json({ message: 'Actividad asignada correctamente', id_act: results.insertId });
+    }
+  });
+});
+
+
+// Endpoint para editar una actividad
+app.put('/editar-actividad/:id', (req, res) => {
+  const { id } = req.params;
+  const {
+    actividad,
+    descripcion,
+    area,
+    fech_ini,
+    fech_fin,
+    user_type
+  } = req.body;
+
+
+  // Verificación del tipo de usuario
+  if (user_type !== 'admin' && user_type !== 'supervisor') {
+    return res.status(403).json({ error: 'No tienes permisos para realizar esta acción' });
+  }
+
+  // Actualizar la actividad en la base de datos
+  const query = `
+    UPDATE actividades
+    SET actividad = ?, descripcion = ?, area = ?, fech_ini = ?, fech_fin = ?
+    WHERE id_act = ?
+  `;
+  const values = [actividad, descripcion, area, fech_ini, fech_fin, id];
+
+  db.query(query, values, function (err) {
+    if (err) {
+      console.error(err.message);
+      return res.status(500).json({ error: 'Error al actualizar la actividad' });
+    }
+
+    return res.json({ message: 'Actividad actualizada correctamente' });
+  });
+});
+
+//detalles actividad por id de empleado al que se le asignaron
+app.get('/cargar-actividad/:id_act', (req, res) => {
+  const id_act = req.params.id_act;
+  const query = `
+    SELECT actividad, descripcion, area, fech_ini, fech_fin
+    FROM actividades
+    WHERE id_act = ?
+  `;
+
+  db.query(query, [id_act], (err, results) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      res.status(500).json({ error: 'Error fetching activities' });
+    } else {
+      console.log('Query results:', results);
+      res.json(results);
+    }
+  });
+});
+
+
+// Define tu API Key aquí
+const apiKey = '57f703f3-d073-4840-9b44-f4542d5ed860';
+
+app.get('/getAir/:latitude/:longitude', async (req, res) => {
+  try {
+      const { latitude, longitude } = req.params;
+
+      // Llamada a la API de AirVisual para obtener los datos
+      const response = await fetch(`http://api.airvisual.com/v2/nearest_city?lat=${latitude}&lon=${longitude}&key=${apiKey}`);
+      const data = await response.json();
+
+      if (response.ok) {
+          const Result = {
+              pollution: data.data.current.pollution,
+              weather: data.data.current.weather // Incluye datos del clima
+          };
+          res.json({ Result });
+      } else {
+          throw new Error(data.message || 'Error al obtener los datos de calidad del aire');
+      }
+  } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: 'An error occurred' });
+  }
+});
 
 const db = mysql.createPool({
   connectionLimit: 10,
@@ -99,6 +262,7 @@ app.post('/login', (req, res) => {
               user_name: user.nom_usu,
               user_email: user.email_usu,
               user_last_name: user.app_usu,
+              user_type: user.tipo_usu
               // Agregar más campos del usuario si es necesario
             }
           });
@@ -332,6 +496,18 @@ app.post('/signup', (req, res) => {
   });
 });
 
+
+// Endpoint para recuperar la información de los empleados
+app.get('/empleados', (req, res) => {
+  db.query('SELECT id_usu, nom_usu, app_usu FROM usuarios WHERE tipo_usu = "empleado"', (err, results) => {
+    if (err) {
+      console.error('Error al obtener empleados:', err);
+      res.status(500).json({ error: 'Error al obtener empleados' });
+      return;
+    }
+    res.json({ empleados: results });
+  });
+});
 
 app.listen(port, () => {
   console.log(`Servidor corriendo en el puerto ${port}`);

@@ -8,13 +8,21 @@ export default function MiCuenta() {
   const router = useRouter();
   const [userData, setUserData] = useState(null);
 
+  const [iconColors, setIconColors] = useState({
+    viewList: '#71728a',
+    alertCircle: '#71728a',
+    accountGroup: '#71728a',
+    account: '#71728a',
+    cloud: '#71728a',
+  });
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const storedUserData = await AsyncStorage.getItem('userData');
         if (storedUserData) {
           const parsedUserData = JSON.parse(storedUserData);
-          const response = await fetch(`http://192.168.3.15:3000/user-data?userId=${parsedUserData.user_id}`);
+          const response = await fetch(`http://192.168.3.30:3000/user-data?userId=${parsedUserData.user_id}`);
           const data = await response.json();
           if (response.ok) {
             setUserData(data.user);
@@ -34,8 +42,12 @@ export default function MiCuenta() {
     router.push('/editar');
   };
 
-  const handleNavigation = (screenName) => {
-    router.push(screenName);
+  const handleNavigation = (screen, icon) => {
+    router.push(screen); // Navegar a la pantalla específica
+    setIconColors(prevState => ({
+      ...prevState,
+      [icon]: '#F2E527', // Cambiar al color deseado al ser presionado
+    }));
   };
 
   const handleLogout = async () => {
@@ -44,7 +56,7 @@ export default function MiCuenta() {
       if (userData) {
         const { user_id } = JSON.parse(userData);
 
-        const response = await fetch('http://192.168.3.15:3000/logout', {
+        const response = await fetch('http://192.168.3.30:3000/logout', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -94,7 +106,7 @@ export default function MiCuenta() {
       if (userData) {
         const { user_id } = JSON.parse(userData);
 
-        const response = await fetch('http://192.168.3.15:3000/user-delete', {
+        const response = await fetch('http://192.168.3.30:3000/user-delete', {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
@@ -180,36 +192,38 @@ export default function MiCuenta() {
       <View style={styles.navigationBar}>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('/screen1')}
+          onPress={() => handleNavigation('/asignaAct', 'viewList')} // Aquí se navega a la misma página
         >
-          <Icon name="view-list" size={30} color="#2B2C5E" />
+          <Icon name="view-list" size={30} color={iconColors.viewList} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('/screen2')}
+          onPress={() => handleNavigation('/screen3', 'accountGroup')}
         >
-          <Icon name="alert-circle" size={30} color="#2B2C5E" />
+          <Icon name="alert-circle" size={30} color={iconColors.alertCircle} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('/screen3')}
+          onPress={() => handleNavigation('/screen3', 'accountGroup')}
         >
-          <Icon name="account-group" size={30} color="#2B2C5E" />
+          <Icon name="account-group" size={30} color={iconColors.accountGroup} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('/screen4')}
+          onPress={() => handleNavigation('/porfile', 'viewList')}
         >
-          <Icon name="account" size={30} color="#2B2C5E" />
+          <Icon name="account" size={30} color={iconColors.account} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('/screen5')}
+          onPress={() => handleNavigation('/calidad', 'cloud')}
         >
-          <Icon name="cloud" size={30} color="#2B2C5E" />
+          <Icon name="cloud" size={30} color={iconColors.cloud} />
         </TouchableOpacity>
       </View>
     </ScrollView>
+    
+    
   );
 }
 
