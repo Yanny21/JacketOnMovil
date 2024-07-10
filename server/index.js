@@ -13,7 +13,7 @@ app.use(express.json());
 app.get('/actividades/:id_emp', (req, res) => {
   const id_emp = req.params.id_emp;
   const query = `
-      SELECT id_act, actividad, fech_lim, fech_asig, fech_ini, fech_fin, area
+      SELECT id_act, actividad, fech_lim, fech_asig, fech_ini, fech_fin, area, estatus
       FROM actividades
       WHERE id_usu_asignado = ?
     `;
@@ -508,6 +508,66 @@ app.get('/empleados', (req, res) => {
     res.json({ empleados: results });
   });
 });
+
+
+// Endpoint para iniciar una actividad
+app.put('/start-activity/:id', (req, res) => {
+  const activityId = req.params.id;
+
+  db.getConnection((err, connection) => {
+    if (err) {
+      console.error('Error al conectar a la base de datos:', err);
+      return res.status(500).json({ message: 'No hay conexión a la base de datos' });
+    }
+
+    const fech_ini = new Date().toISOString().slice(0, 19).replace('T', ' '); // Fecha y hora actual en formato MySQL
+
+    connection.query('UPDATE actividades SET fech_ini = ? WHERE id_act = ?', [fech_ini, activityId], (err, result) => {
+      connection.release(); // Liberar la conexión después de usarla
+
+      if (err) {
+        console.error('Error al iniciar la actividad:', err);
+        return res.status(500).json({ message: 'Error al iniciar la actividad' });
+      }
+
+      if (result.affectedRows > 0) {
+        res.json({ message: 'Actividad iniciada correctamente' });
+      } else {
+        res.status(404).json({ message: 'Actividad no encontrada' });
+      }
+    });
+  });
+});
+
+//Finalizar actividad endpoint
+app.put('/end-activity/:id', (req, res) => {
+  const activityId = req.params.id;
+
+  db.getConnection((err, connection) => {
+    if (err) {
+      console.error('Error al conectar a la base de datos:', err);
+      return res.status(500).json({ message: 'No hay conexión a la base de datos' });
+    }
+
+    const fech_fin = new Date().toISOString().slice(0, 19).replace('T', ' '); // Fecha y hora actual en formato MySQL
+
+    connection.query('UPDATE actividades SET fech_fin= ?, estatus=0 WHERE id_act = ?', [fech_fin, activityId], (err, result) => {
+      connection.release(); // Liberar la conexión después de usarla
+
+      if (err) {
+        console.error('Error al finalizar la actividad:', err);
+        return res.status(500).json({ message: 'Error al finalizar la actividad' });
+      }
+
+      if (result.affectedRows > 0) {
+        res.json({ message: 'Actividad finalizada correctamente' });
+      } else {
+        res.status(404).json({ message: 'Actividad no encontrada' });
+      }
+    });
+  });
+});
+
 
 app.listen(port, () => {
   console.log(`Servidor corriendo en el puerto ${port}`);
