@@ -38,7 +38,7 @@ const Actividades = () => {
 
   const fetchActivityDetails = async () => {
     try {
-      const response = await fetch(`http://10.13.0.115:3000/actividades/${id_act}`);
+      const response = await fetch(`http://192.168.100.11:3000/actividades/${id_act}`);
       const data = await response.json();
       if (response.ok) {
         setActivityDetails(data);
@@ -91,7 +91,7 @@ const Actividades = () => {
 
   const handleAssign = async () => {
     try {
-      const response = await fetch('http://10.13.0.115:3000/insertar-actividad', {
+      const response = await fetch('http://192.168.100.11:3000/insertar-actividad', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

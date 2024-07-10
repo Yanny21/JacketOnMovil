@@ -24,7 +24,7 @@ export default function DetallesAct() {
 
     if (id_usu) {
       console.log(`Fetching activities for user ID: ${id_usu}`);
-      axios.get(`http://10.13.0.115:3000/actividades/${id_usu}`)
+      axios.get(`http://192.168.100.11:3000/actividades/${id_usu}`)
         .then(response => {
           console.log('Response data:', response.data);
           if (Array.isArray(response.data)) {
@@ -84,7 +84,7 @@ export default function DetallesAct() {
         {
           text: 'Eliminar',
           onPress: () => {
-            axios.delete(`http://10.13.0.115:3000/actividades/${id}`)
+            axios.delete(`http://192.168.100.11:3000/actividades/${id}`)
               .then(response => {
                 console.log('Actividad eliminada:', response.data.message);
                 setActivities(prevActivities => prevActivities.filter(activity => activity.id_act !== id));

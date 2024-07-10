@@ -486,6 +486,97 @@ app.put('/api/actividades/:id_act', (req, res) => {
   });
 });
 
+// Endpoint para obtener las actividades de un usuario específico
+app.get('/user-activities/:id_usu', (req, res) => {
+  const userId = req.params.id_usu; // ID del usuario como un parámetro de ruta
+
+  if (!userId) {
+    return res.status(400).json({ message: 'ID de usuario requerido' });
+  }
+
+  db.getConnection((err, connection) => {
+    if (err) {
+      console.error('Error al conectar a la base de datos:', err);
+      return res.status(500).json({ message: 'No hay conexión a la base de datos' });
+    }
+
+    connection.query('SELECT * FROM actividades WHERE id_usu_asignado = ?', [userId], (err, results) => {
+      connection.release(); // Liberar la conexión después de usarla
+
+      if (err) {
+        console.error('Error al obtener las actividades:', err);
+        return res.status(500).json({ message: 'Error al obtener las actividades' });
+      }
+
+      res.json({
+        message: 'Actividades obtenidas exitosamente',
+        activities: results,
+      });
+    });
+  });
+});
+
+
+
+// Endpoint para iniciar una actividad
+app.put('/start-activity/:id', (req, res) => {
+  const activityId = req.params.id;
+
+  db.getConnection((err, connection) => {
+    if (err) {
+      console.error('Error al conectar a la base de datos:', err);
+      return res.status(500).json({ message: 'No hay conexión a la base de datos' });
+    }
+
+    const fech_ini = new Date().toISOString().slice(0, 19).replace('T', ' '); // Fecha y hora actual en formato MySQL
+
+    connection.query('UPDATE actividades SET fech_ini = ? WHERE id_act = ?', [fech_ini, activityId], (err, result) => {
+      connection.release(); // Liberar la conexión después de usarla
+
+      if (err) {
+        console.error('Error al iniciar la actividad:', err);
+        return res.status(500).json({ message: 'Error al iniciar la actividad' });
+      }
+
+      if (result.affectedRows > 0) {
+        res.json({ message: 'Actividad iniciada correctamente' });
+      } else {
+        res.status(404).json({ message: 'Actividad no encontrada' });
+      }
+    });
+  });
+});
+
+//Finalizar actividad endpoint
+app.put('/end-activity/:id', (req, res) => {
+  const activityId = req.params.id;
+
+  db.getConnection((err, connection) => {
+    if (err) {
+      console.error('Error al conectar a la base de datos:', err);
+      return res.status(500).json({ message: 'No hay conexión a la base de datos' });
+    }
+
+    const fech_fin = new Date().toISOString().slice(0, 19).replace('T', ' '); // Fecha y hora actual en formato MySQL
+
+    connection.query('UPDATE actividades SET fech_fin= ?, estatus=0 WHERE id_act = ?', [fech_fin, activityId], (err, result) => {
+      connection.release(); // Liberar la conexión después de usarla
+
+      if (err) {
+        console.error('Error al finalizar la actividad:', err);
+        return res.status(500).json({ message: 'Error al finalizar la actividad' });
+      }
+
+      if (result.affectedRows > 0) {
+        res.json({ message: 'Actividad finalizada correctamente' });
+      } else {
+        res.status(404).json({ message: 'Actividad no encontrada' });
+      }
+    });
+  });
+});
+
+
 
 
 app.listen(port, () => {

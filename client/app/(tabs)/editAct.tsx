@@ -23,7 +23,7 @@ const EditAct = () => {
 
 const fetchActivityDetails = async () => {
   try {
-    const response = await axios.get(`http://10.13.0.115:3000/edit-act/${id}`);
+    const response = await axios.get(`http://192.168.100.11:3000/edit-act/${id}`);
     const activityData = response.data; // Suponiendo que response.data es un objeto con los datos de la actividad
 
     console.log('Datos de la actividad:', activityData);
@@ -78,7 +78,7 @@ const fetchActivityDetails = async () => {
 
   const handleEdit = async () => {
     try {
-      const response = await axios.put(`http://10.13.0.115:3000/actividades/${id_act}`, {
+      const response = await axios.put(`http://192.168.100.11:3000/actividades/${id_act}`, {
         actividad: actividad,
         descripcion: descripcion,
         area: area,

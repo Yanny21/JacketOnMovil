@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="87f9a2f9-c014-405b-88d6-313620096ad5" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/app/(tabs)/actEmp.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/.expo/types/router.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/.expo/types/router.d.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/(tabs)/actividad.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/(tabs)/actividad.tsx" afterDir="false" />
@@ -16,10 +16,9 @@
       <change beforePath="$PROJECT_DIR$/client/app/(tabs)/password.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/(tabs)/password.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/(tabs)/porfile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/(tabs)/porfile.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/_layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/index.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/login.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/registro.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/registro.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/expo-env.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/expo-env.d.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
