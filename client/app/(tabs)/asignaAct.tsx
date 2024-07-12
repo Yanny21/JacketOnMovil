@@ -30,12 +30,12 @@ export default function AsignaAct() {
           setUserType(user_type);
           if (user_type !== 'supervisor') {
             // Redirigir a /actividad si el tipo de usuario no es admin o supervisor
-            router.push('/actividad');
+            router.push('/actEmp');
             return;
           }
         } else {
           // Redirigir a /actividad si no hay datos de usuario en AsyncStorage
-          router.push('/actividad');
+          router.push('/actEmp');
           return;
         }
         // Si el tipo de usuario es válido, entonces obtener los empleados
@@ -43,7 +43,7 @@ export default function AsignaAct() {
       } catch (error) {
         console.error('Error al obtener el tipo de usuario:', error);
         // En caso de error, redirigir a /actividad
-        router.push('/actividad');
+        router.push('/actEmp');
       }
     };
 

@@ -169,6 +169,7 @@ export default function DetallesAct() {
                   <Text style={styles.activityDetail}>Fecha de inicio: {activity.fech_ini}</Text>
                   <Text style={styles.activityDetail}>Fecha límite: {activity.fech_lim}</Text>
                   <Text style={styles.activityDetail}>Área: {activity.area}</Text>
+                  <Text style={styles.activityDetail}>Estatus: {activity.estatus}</Text>
                 </View>
                 <View style={styles.activityIcons}>
                   <TouchableOpacity onPress={() => handleEditActivity(activity.id_act)}>
