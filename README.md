@@ -1,6 +1,6 @@
 Changelog
 
-Changelog Alpha Prime 0.5.0 (07/12/2024)
+Alpha Prime 0.5.0 (07/12/2024)
 
 Implementada navegación estandarizada alrededor de toda la aplicación.
 Aplicación de los estilos planteados por Yanny Moreno en todas las vistas.
