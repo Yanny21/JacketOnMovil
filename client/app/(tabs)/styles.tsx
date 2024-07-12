@@ -107,7 +107,6 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     padding: 20,
-
   },
   searchBarContainer: {
      flexDirection: 'row',
@@ -115,7 +114,6 @@ export const styles = StyleSheet.create({
      backgroundColor: '#',
      borderRadius: 13,
      paddingHorizontal: 5,
-     marginTop: 40,
      marginBottom: 20,
      borderColor: '#C2C0C0', // Color del borde
      borderWidth: 2, // Ancho del borde
@@ -132,7 +130,7 @@ export const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 30,
-    marginTop: 40,
+    marginTop: 20,
     textAlign: 'center',
   },
   employeeCard: {
@@ -183,7 +181,6 @@ export const styles = StyleSheet.create({
         padding: 15,
         borderRadius: 10,
         marginBottom: 10,
-        marginTop: 40,
       },
       activityTitle: {
         fontSize: 18,
@@ -207,119 +204,7 @@ export const styles = StyleSheet.create({
        flexDirection: 'column',
        justifyContent: 'space-between',
        height: 80, // Ajusta esta altura según sea necesario
-       marginBottom: 40,
      },
-      scrollViewContent: {
-         paddingVertical: 40,
-         paddingHorizontal: 20,
-         alignItems: 'center',
-       },
-       profileIconContainer: {
-           marginVertical: 20,
-       },
-name: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#2B2C5E',
-  },
 
-   infoContainer: {
-      alignItems: 'flex-start',
-      marginVertical: 20,
-    },
-     label: {
-        fontSize: 14,
-        color: '#7E7E7E',
-        marginBottom: 5,
-      },
 
-      gridContainer: {
-          flexDirection: 'row',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          width: '100%',
-          marginTop: 20,
-        },
-
-         gridItem: {
-            width: '40%',
-            alignItems: 'center',
-            margin: '5%',
-            padding: 20,
-            backgroundColor: '#FFD700',
-            borderRadius: 20,
-          },
-          deleteButton: {
-              backgroundColor: '#FF4500', // Rojo para el botón de eliminar cuenta
-            },
-            completedContainer: {
-                alignItems: 'center',
-                justifyContent: 'center',
-              },
-              completedText: {
-                color: '#2B2C5E',
-                fontSize: 18,
-                marginTop: 5, // Espacio entre el icono y el texto
-                marginBottom: 10,
-              },
-               tabContainer: {
-                  flexDirection: 'row',
-                  justifyContent: 'center',
-                  marginBottom: 20,
-                },
-                tabButton: {
-                  paddingVertical: 10,
-                  paddingHorizontal: 20,
-                  borderRadius: 20,
-                  backgroundColor: '#E0E0E0',
-                  marginHorizontal: 5,
-                  marginTop: 40,
-                },
-                activeTabButton: {
-                  backgroundColor: '#F2E527',
-                },
-                tabText: {
-                  fontSize: 16,
-                  fontWeight: 'bold',
-
-                },
-                contentContainer: {
-                  alignItems: 'center',
-                },
-                chart: {
-                  width: '100%',
-                  height: 200,
-                  backgroundColor: '#f0f0f0',
-                  borderRadius: 10,
-                  marginBottom: 20,
-                },
-                reportContainer: {
-                  alignItems: 'center',
-                  marginBottom: 20,
-                },
-                reportText: {
-                  fontSize: 34,
-                  fontWeight: 'bold',
-                  color: '#2B2C5E',
-                },
-                reportSubtext: {
-                  fontSize: 16,
-                  color: '#888',
-                },
-                reportButton: {
-                  backgroundColor: '#F2E527',
-                  padding: 10,
-                  borderRadius: 10,
-                  alignItems: 'center',
-                  marginBottom: 20,
-                },
-                reportButtonText: {
-                  color: '#fff',
-                  fontSize: 16,
-                  fontWeight: 'bold',
-                },
-                scrollViewContent: {
-                  paddingVertical: 40,
-                  paddingHorizontal: 20,
-                },
 });

@@ -4,7 +4,6 @@ import axios from 'axios';
 import { FontAwesome } from '@expo/vector-icons'; // No se necesita FontAwesome5 según los estilos proporcionados
 import { styles } from './styles'; // Importar los estilos definidos
 import { useRouter } from 'expo-router'; // Importar useRouter desde expo-router
-import Login from './login';
 
 export default function SignUpScreen() {
   const router = useRouter(); // Obtener router usando useRouter hook
@@ -15,14 +14,15 @@ export default function SignUpScreen() {
 
   const handleSignup = async () => {
     try {
-      const response = await axios.post('http://10.13.6.131:3000/signup', {
+      const response = await axios.post('http://192.168.3.30:3000/signup', {
         user_email: user_email,
         user_password: user_password,
         user_name: user_name,
         user_last_name: user_last_name,
       });
       Alert.alert('Registro exitoso', response.data.message);
-      // Redirigir a la siguiente pantalla después del registro exitoso si es necesario
+      // Redirigir a la pantalla de login después del registro exitoso
+      router.push('/login');
     } catch (error) {
       Alert.alert('Error', error.response.data.message || 'Error al intentar registrarse');
     }

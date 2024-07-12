@@ -3,7 +3,11 @@ import type { ReactNode } from 'react';
 import type { TextProps, GestureResponderEvent } from 'react-native';
 
 export namespace ExpoRouter {
+<<<<<<< HEAD
   type StaticRoutes = `/` | `/(tabs)/actEmp` | `/(tabs)/actividad` | `/(tabs)/asignaAct` | `/(tabs)/detallesAct` | `/(tabs)/editAct` | `/(tabs)/editar` | `/(tabs)/graficasyrep` | `/(tabs)/home` | `/(tabs)/metricas` | `/(tabs)/metricasGraf` | `/(tabs)/password` | `/(tabs)/porfile` | `/(tabs)/reporte` | `/(tabs)/styles` | `/(tabs)\grafyrepEmp` | `/_sitemap` | `/actEmp` | `/actividad` | `/asignaAct` | `/detallesAct` | `/editAct` | `/editar` | `/graficasyrep` | `/home` | `/login` | `/metricas` | `/metricasGraf` | `/password` | `/porfile` | `/registro` | `/reporte` | `/styles`;
+=======
+  type StaticRoutes = `/` | `/(tabs)/actividad` | `/(tabs)/asignaAct` | `/(tabs)/calidad` | `/(tabs)/detallesAct` | `/(tabs)/editAct` | `/(tabs)/editar` | `/(tabs)/home` | `/(tabs)/password` | `/(tabs)/porfile` | `/(tabs)/reporte` | `/(tabs)/styles` | `/_sitemap` | `/actividad` | `/asignaAct` | `/calidad` | `/detallesAct` | `/editAct` | `/editar` | `/home` | `/login` | `/password` | `/porfile` | `/registro` | `/reporte` | `/styles`;
+>>>>>>> 5d0f74fae0b1c3da58cccc3690da9909f0a9bfcb
   type DynamicRoutes<T extends string> = never;
   type DynamicRouteTemplate = never;
 
