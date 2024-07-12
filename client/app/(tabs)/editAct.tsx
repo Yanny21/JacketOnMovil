@@ -37,7 +37,7 @@ const EditAct = () => {
           router.push('/profile');
           return;
         }
-  
+
         // Cargar datos de la actividad
         const response = await fetch(`http://192.168.3.30:3000/cargar-actividad/${id_act}`);
         const data = await response.json();
@@ -55,22 +55,22 @@ const EditAct = () => {
         router.push('/profile');
       }
     };
-  
+
     checkUserType();
-  
+
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
       setKeyboardVisible(true);
     });
     const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
       setKeyboardVisible(false);
     });
-  
+
     return () => {
       keyboardDidHideListener.remove();
       keyboardDidShowListener.remove();
     };
   }, [router, id_act]);
-  
+
 
   const handleIconPress = () => {
     console.log('Icono presionado');

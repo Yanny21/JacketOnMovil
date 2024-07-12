@@ -117,7 +117,7 @@ export default function detEmpAct() {
     <View style={styles.containerV}>
       <Text style={styles.headerV}>Actividades de: {userName}</Text>
       <ScrollView style={styles.activityList}>
-        {activities.map(activity => (
+      {activities.map(activity => (
           <View key={activity.id_act} style={styles.activityCard}>
             <View style={styles.activityContent}>
               <View>

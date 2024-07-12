@@ -87,13 +87,9 @@ export default function DetallesAct() {
     }
   };
 
-  const handleNavigation = (screen, icon) => {
-    router.push(screen);
-    setIconColors(prevState => ({
-      ...prevState,
-      [icon]: '#F2E527',
-    }));
-  };
+  const handleNavigation = (screen) => {
+     router.push(screen); // Navegar a la pantalla específica
+   };
 
   const handleAssignActivity = () => {
     router.push({
@@ -187,37 +183,37 @@ export default function DetallesAct() {
         )}
       </ScrollView>
       <View style={styles.navigationBar}>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => handleNavigation('/detallesAct', 'viewList')}
-        >
-          <Icon name="view-list" size={30} color={iconColors.viewList} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => handleNavigation('/screen3', 'alertCircle')}
-        >
-          <Icon name="alert-circle" size={30} color={iconColors.alertCircle} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => handleNavigation('/screen3', 'accountGroup')}
-        >
-          <Icon name="account-group" size={30} color={iconColors.accountGroup} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => handleNavigation('/porfile', 'account')}
-        >
-          <Icon name="account" size={30} color={iconColors.account} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => handleNavigation('/screen5', 'cloud')}
-        >
-          <Icon name="cloud" size={30} color={iconColors.cloud} />
-        </TouchableOpacity>
-      </View>
+             <TouchableOpacity
+               style={styles.navButton}
+                onPress={() => handleNavigation('/asignaAct')}
+             >
+               <Icon name="view-list" size={30} color="#F2E527" />
+             </TouchableOpacity>
+             <TouchableOpacity
+               style={styles.navButton}
+               onPress={() => handleNavigation('/graficasyrep')}
+             >
+               <Icon name="alert-circle" size={30} color="#71728a" />
+             </TouchableOpacity>
+             <TouchableOpacity
+               style={styles.navButton}
+               onPress={() => handleNavigation('/screen3')}
+             >
+               <Icon name="account-group" size={30} color="#71728a" />
+             </TouchableOpacity>
+             <TouchableOpacity
+               style={styles.navButton}
+               onPress={() => handleNavigation('/porfile')}
+             >
+               <Icon name="account" size={30} color="#71728a" />
+             </TouchableOpacity>
+             <TouchableOpacity
+               style={styles.navButton}
+               onPress={() => handleNavigation('/calidad')}
+             >
+               <Icon name="cloud" size={30} color="#71728a" />
+             </TouchableOpacity>
+           </View>
     </View>
   );
 }
