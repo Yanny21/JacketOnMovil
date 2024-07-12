@@ -1,5 +1,12 @@
 Changelog
-Alpha Prime 0.0.5 (06/25/2024)
+
+Changelog Alpha Prime 0.5.0 (07/12/2024)
+
+Implementada navegación estandarizada alrededor de toda la aplicación.
+Aplicación de los estilos planteados por Yanny Moreno en todas las vistas.
+Corregido un error en el que las actividades del empleado no se mostraban.
+
+Alpha Prime 0.0.0 (06/25/2024)
 Modificación del endpoint de eliminar cuenta para realizar solo baja lógica.
 Recuperación del dato de tipo en el endpoint userData.
 Validación del tipo de usuario al iniciar sesión y en el panel de cuenta.
