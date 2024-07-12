@@ -80,7 +80,7 @@ export default function GraficaReportes() {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('/screen5')}
+          onPress={() => handleNavigation('/calidad')}
         >
           <Icon name="cloud" size={30} color="#71728a" />
         </TouchableOpacity>

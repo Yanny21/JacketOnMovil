@@ -104,7 +104,7 @@ const Actividades = () => {
     }
 
     try {
-      const response = await fetch('http://192.168.3.30:3000/insertar-actividad', {
+      const response = await fetch('http://192.168.1.71:3000/insertar-actividad', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

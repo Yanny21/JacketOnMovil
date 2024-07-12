@@ -38,7 +38,7 @@ export default function metricas() {
           placeholderTextColor="#71728a"
         />
       </View>
-      <Text style={styles.headerV}>Metricas de empleados</Text>
+      <Text style={styles.headerP}>Metricas de empleados</Text>
       <ScrollView>
         {employees.map((employee, index) => (
           <TouchableOpacity key={index} onPress={() => handleEmployeePress(employee.name)}>
@@ -75,7 +75,7 @@ export default function metricas() {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('/screen5')}
+          onPress={() => handleNavigation('/calidad')}
         >
           <Icon name="cloud" size={30} color="#71728a" />
         </TouchableOpacity>

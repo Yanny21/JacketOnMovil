@@ -39,7 +39,7 @@ const EditAct = () => {
         }
 
         // Cargar datos de la actividad
-        const response = await fetch(`http://192.168.3.30:3000/cargar-actividad/${id_act}`);
+        const response = await fetch(`http://192.168.1.71:3000/cargar-actividad/${id_act}`);
         const data = await response.json();
         if (data.length > 0) {
           const actividadData = data[0]; // Acceder al primer elemento del array
@@ -112,7 +112,7 @@ const EditAct = () => {
     }
 
     try {
-      const response = await fetch(`http://192.168.3.30:3000/editar-actividad/${id_act}`, {
+      const response = await fetch(`http://192.168.1.71:3000/editar-actividad/${id_act}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

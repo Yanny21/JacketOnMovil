@@ -56,7 +56,7 @@ export default function DetallesAct() {
     try {
       if (id_emp) {
         console.log(`Fetching activities for user ID: ${id_emp}`);
-        const response = await axios.get(`http://192.168.3.30:3000/actividades/${id_emp}`);
+        const response = await axios.get(`http://192.168.1.71:3000/actividades/${id_emp}`);
         console.log('Response data:', response.data);
 
         // Verifica el tipo de contenido de la respuesta
@@ -87,13 +87,9 @@ export default function DetallesAct() {
     }
   };
 
-  const handleNavigation = (screen, icon) => {
-    router.push(screen);
-    setIconColors(prevState => ({
-      ...prevState,
-      [icon]: '#F2E527',
-    }));
-  };
+  const handleNavigation = (screen) => {
+     router.push(screen); // Navegar a la pantalla específica
+   };
 
   const handleAssignActivity = () => {
     router.push({
@@ -126,7 +122,7 @@ export default function DetallesAct() {
         {
           text: 'Eliminar',
           onPress: () => {
-            axios.delete(`http://192.168.3.30:3000/delete-act/${id}`)
+            axios.delete(`http://192.168.1.71:3000/delete-act/${id}`)
               .then(response => {
                 console.log('Actividad eliminada:', response.data.message);
                 setActivities(prevActivities => prevActivities.filter(activity => activity.id_act !== id));
@@ -186,37 +182,37 @@ export default function DetallesAct() {
         )}
       </ScrollView>
       <View style={styles.navigationBar}>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => handleNavigation('/detallesAct', 'viewList')}
-        >
-          <Icon name="view-list" size={30} color={iconColors.viewList} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => handleNavigation('/screen3', 'alertCircle')}
-        >
-          <Icon name="alert-circle" size={30} color={iconColors.alertCircle} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => handleNavigation('/screen3', 'accountGroup')}
-        >
-          <Icon name="account-group" size={30} color={iconColors.accountGroup} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => handleNavigation('/porfile', 'account')}
-        >
-          <Icon name="account" size={30} color={iconColors.account} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => handleNavigation('/screen5', 'cloud')}
-        >
-          <Icon name="cloud" size={30} color={iconColors.cloud} />
-        </TouchableOpacity>
-      </View>
+             <TouchableOpacity
+               style={styles.navButton}
+                onPress={() => handleNavigation('/asignaAct')}
+             >
+               <Icon name="view-list" size={30} color="#F2E527" />
+             </TouchableOpacity>
+             <TouchableOpacity
+               style={styles.navButton}
+               onPress={() => handleNavigation('/graficasyrep')}
+             >
+               <Icon name="alert-circle" size={30} color="#71728a" />
+             </TouchableOpacity>
+             <TouchableOpacity
+               style={styles.navButton}
+               onPress={() => handleNavigation('/screen3')}
+             >
+               <Icon name="account-group" size={30} color="#71728a" />
+             </TouchableOpacity>
+             <TouchableOpacity
+               style={styles.navButton}
+               onPress={() => handleNavigation('/porfile')}
+             >
+               <Icon name="account" size={30} color="#71728a" />
+             </TouchableOpacity>
+             <TouchableOpacity
+               style={styles.navButton}
+               onPress={() => handleNavigation('/calidad')}
+             >
+               <Icon name="cloud" size={30} color="#71728a" />
+             </TouchableOpacity>
+           </View>
     </View>
   );
 }
