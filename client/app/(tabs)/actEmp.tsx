@@ -6,14 +6,13 @@ import { useRouter } from 'expo-router';
 import { styles } from './styles';
 
 export default function detEmpAct() {
+
+ const handleNavigation = (screen) => {
+    router.push(screen); // Navegar a la pantalla específica
+  };
+
   const [activities, setActivities] = useState([]);
-  const [iconColors, setIconColors] = useState({
-    viewList: '#71728a',
-    alertCircle: '#71728a',
-    accountGroup: '#71728a',
-    account: '#71728a',
-    cloud: '#71728a',
-  });
+
   const [userName, setUserName] = useState('');
   const router = useRouter();
 
@@ -24,7 +23,7 @@ export default function detEmpAct() {
         if (storedUserData) {
           const parsedUserData = JSON.parse(storedUserData);
           setUserName(`${parsedUserData.user_name} ${parsedUserData.user_last_name}`);
-          const response = await fetch(`http://192.168.3.30:3000/actividades/${parsedUserData.user_id}`);
+          const response = await fetch(`http://192.168.1.71:3000/actividades/${parsedUserData.user_id}`);
           const data = await response.json();
           if (response.ok) {
             setActivities(data); // Directamente establece las actividades ya que la respuesta es un array de objetos
@@ -39,19 +38,11 @@ export default function detEmpAct() {
   
     fetchActivities();
   }, []);
-  
 
-  const handleNavigation = (screen, icon) => {
-    router.push(screen);
-    setIconColors(prevState => ({
-      ...prevState,
-      [icon]: '#F2E527',
-    }));
-  };
 
   const handleStartActivity = async (activityId) => {
     try {
-      const response = await fetch(`http://192.168.3.30:3000/start-activity/${activityId}`, {
+      const response = await fetch(`http://192.168.1.71:3000/start-activity/${activityId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -82,7 +73,7 @@ export default function detEmpAct() {
 
   const handleFinishActivity = async (activityId) => {
     try {
-      const response = await fetch(`http://192.168.3.30:3000/end-activity/${activityId}`, {
+      const response = await fetch(`http://192.168.1.71:3000/end-activity/${activityId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -146,37 +137,30 @@ export default function detEmpAct() {
         ))}
       </ScrollView>
       <View style={styles.navigationBar}>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => handleNavigation('/screen1', 'viewList')}
-        >
-          <Icon name="view-list" size={30} color={iconColors.viewList} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => handleNavigation('/screen2', 'alertCircle')}
-        >
-          <Icon name="alert-circle" size={30} color={iconColors.alertCircle} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => handleNavigation('/screen3', 'accountGroup')}
-        >
-          <Icon name="account-group" size={30} color={iconColors.accountGroup} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => handleNavigation('/screen4', 'account')}
-        >
-          <Icon name="account" size={30} color={iconColors.account} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => handleNavigation('/screen5', 'cloud')}
-        >
-          <Icon name="cloud" size={30} color={iconColors.cloud} />
-        </TouchableOpacity>
-      </View>
+              <TouchableOpacity
+                style={styles.navButton}
+              >
+                <Icon name="view-list" size={30} color="#F2E527" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.navButton}
+                onPress={() => handleNavigation('/grafyrepEmp')}
+              >
+                <Icon name="alert-circle" size={30} color="#71728a" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.navButton}
+                onPress={() => handleNavigation('/profile')}
+              >
+                <Icon name="account" size={30} color="#71728a" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.navButton}
+                onPress={() => handleNavigation('/calidadEmp')}
+              >
+                <Icon name="cloud" size={30} color="#71728a" />
+              </TouchableOpacity>
+            </View>
     </View>
   );
 }

@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { styles } from './styles';
 
-export default function EditScreen() {
+export default function EditScreenE() {
   const router = useRouter();
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [userData, setUserData] = useState({

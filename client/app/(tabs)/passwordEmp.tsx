@@ -5,7 +5,7 @@ import { styles } from './styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 
-export default function ChangePScreen() {
+export default function ChangePScreenE() {
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');

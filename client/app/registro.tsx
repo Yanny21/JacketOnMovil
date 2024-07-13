@@ -14,7 +14,7 @@ export default function SignUpScreen() {
 
   const handleSignup = async () => {
     try {
-      const response = await axios.post('http://192.168.3.30:3000/signup', {
+      const response = await axios.post('http://192.168.1.71:3000/signup', {
         user_email: user_email,
         user_password: user_password,
         user_name: user_name,
@@ -36,9 +36,6 @@ export default function SignUpScreen() {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.inner}>
           <View style={styles.container}>
-            <TouchableOpacity style={styles.closeButton}>
-              <FontAwesome name="times" size={22} color="#F2E527" />
-            </TouchableOpacity>
             <Text style={styles.title}>Registro</Text>
             <View style={styles.inputContainer}>
               <TextInput

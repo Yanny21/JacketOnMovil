@@ -41,7 +41,7 @@ export default function AsignaAct() {
 
   const fetchEmpleados = async () => {
     try {
-      const response = await fetch('http://192.168.3.30:3000/empleados');
+      const response = await fetch('http://192.168.1.71:3000/empleados');
       if (!response.ok) {
         throw new Error('Error al obtener empleados');
       }

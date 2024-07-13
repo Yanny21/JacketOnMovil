@@ -119,24 +119,32 @@ export default function Calidad() {
         <Image source={require('./assets/images/iqair-logo.png')} style={styles.logo} />
       </View>
 
-      {/* Barra de navegación */}
       <View style={styles.navigationBar}>
-        <TouchableOpacity style={styles.navButton} onPress={() => handleNavigation('/asignaAct')}>
-          <Icon name="view-list" size={30} color="#71728a" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navButton} onPress={() => handleNavigation('/graficasyrep')}>
-          <Icon name="alert-circle" size={30} color="#71728a" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navButton} onPress={() => handleNavigation('/metricas')}>
-          <Icon name="account-group" size={30} color="#71728a" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navButton} onPress={() => handleNavigation('/porfile')}>
-          <Icon name="account" size={30} color="#71728a" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navButton}>
-          <Icon name="cloud" size={30} color="#F2E527" />
-        </TouchableOpacity>
-      </View>
+                    <TouchableOpacity
+                      style={styles.navButton}
+                      onPress={() => handleNavigation('/actEmp')}
+                    >
+                      <Icon name="view-list" size={30} color="#71728a" />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={styles.navButton}
+                      onPress={() => handleNavigation('/grafyrepEmp')}
+                    >
+                      <Icon name="alert-circle" size={30} color="#71728a" />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.navButton}
+                      onPress={() => handleNavigation('/profile')}
+                    >
+                      <Icon name="account" size={30} color="#71728a" />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.navButton}
+                    >
+                      <Icon name="cloud" size={30} color="#F2E527" />
+                    </TouchableOpacity>
+                  </View>
     </View>
   );
 }

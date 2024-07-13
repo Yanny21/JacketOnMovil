@@ -13,7 +13,7 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://192.168.3.30:3000/login', {
+      const response = await axios.post('http://192.168.1.71:3000/login', {
         user_email: user_email,
         user_password: user_password,
       });
@@ -45,9 +45,6 @@ export default function Login() {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.inner}>
           <View style={styles.container}>
-            <TouchableOpacity style={styles.closeButton}>
-              <FontAwesome name="times" size={22} color="#F2E527" />
-            </TouchableOpacity>
             <Text style={styles.title}>Iniciar sesión</Text>
             <View style={styles.inputContainer}>
               <TextInput
