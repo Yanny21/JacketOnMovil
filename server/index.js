@@ -22,7 +22,7 @@ app.get('/generate-report', async (req, res) => {
   try {
     // Fetch activities within the date range
     const query = `
-    SELECT a.id_act, a.actividad, a.descripcion, a.area, a.fech_ini, a.fech_fin, u.nom_usu, u.app_usu
+    SELECT *
     FROM actividades a
     JOIN usuarios u ON a.id_usu_asignado = u.id_usu
     WHERE a.fech_ini BETWEEN ? AND ? AND a.estatus = 0

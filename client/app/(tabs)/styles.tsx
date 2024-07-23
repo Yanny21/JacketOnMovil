@@ -467,7 +467,7 @@ name: {
                       borderRadius: 10,
                       overflow: 'hidden',
                       marginTop: 20,
-                      height: 200, // Ajusta la altura según lo necesites
+                      height: 200,
                     },
                     map: {
                       width: '100%',
