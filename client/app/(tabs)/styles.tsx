@@ -442,4 +442,35 @@ name: {
                       color: 'red',
                       fontSize: 16,
                     },
+                    modalContainer: {
+                      flex: 1,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    },
+                    modalContent: {
+                      width: 300,
+                      padding: 20,
+                      backgroundColor: '#fff',
+                      borderRadius: 10,
+                      alignItems: 'center',
+                    },
+                    modalTitle: {
+                      fontSize: 18,
+                      marginBottom: 10,
+                    },
+                    datePickerText: {
+                      fontSize: 16,
+                      marginVertical: 10,
+                    },
+                    mapContainer: {
+                      borderRadius: 10,
+                      overflow: 'hidden',
+                      marginTop: 20,
+                      height: 200, // Ajusta la altura según lo necesites
+                    },
+                    map: {
+                      width: '100%',
+                      height: '100%',
+                    },
 });

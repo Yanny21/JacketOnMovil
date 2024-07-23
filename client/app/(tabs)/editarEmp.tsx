@@ -39,7 +39,7 @@ export default function EditScreenE() {
 
   const handleSaveChanges = async () => {
     try {
-      const response = await fetch('http://192.168.1.71:3000/update-user', {
+      const response = await fetch('http://192.168.3.15:3000/update-user', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

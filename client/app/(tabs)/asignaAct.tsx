@@ -1,16 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, Modal, Button } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { styles } from './styles';
+import RNFS from 'react-native-fs';
+import FileViewer from 'react-native-file-viewer';
+import * as FileSystem from 'expo-file-system';
+import * as Print from 'expo-print';
+import { Platform } from 'react-native';
+import { Buffer } from 'buffer';
+
 
 export default function AsignaAct() {
-
   const [empleados, setEmpleados] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filteredEmpleados, setFilteredEmpleados] = useState([]);
   const [userType, setUserType] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
 
   const router = useRouter();
 
@@ -41,7 +51,7 @@ export default function AsignaAct() {
 
   const fetchEmpleados = async () => {
     try {
-      const response = await fetch('http://10.13.6.149:3000/empleados');
+      const response = await fetch('http://192.168.3.15:3000/empleados');
       if (!response.ok) {
         throw new Error('Error al obtener empleados');
       }
@@ -77,6 +87,50 @@ export default function AsignaAct() {
     setFilteredEmpleados(filteredData);
   };
 
+  const handleGenerateReport = () => {
+    setModalVisible(true);
+  };
+
+ // Helper function to convert blob to Base64
+const blobToBase64 = (blob) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      resolve(reader.result.split(',')[1]); // Extract base64 part from data URL
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+};
+
+const handleGenerate = async () => {
+  try {
+    // Fetch the PDF from the server
+    const response = await fetch('http://192.168.3.15:3000/generate-report?startDate=' + startDate.toISOString().split('T')[0] + '&endDate=' + endDate.toISOString().split('T')[0]);
+    const blob = await response.blob();
+    const base64Data = await blobToBase64(blob);
+    const fileUri = FileSystem.documentDirectory + 'report.pdf';
+
+    // Write the file in Base64 encoding
+    await FileSystem.writeAsStringAsync(fileUri, base64Data, { encoding: FileSystem.EncodingType.Base64 });
+
+    // Open the file
+    await Print.printAsync({
+      uri: fileUri,
+    });
+
+    setModalVisible(false);
+  } catch (error) {
+    console.error('Error generating or opening PDF:', error);
+  }
+};
+  
+
+  const handleDateChange = (event, selectedDate, setDate) => {
+    const currentDate = selectedDate || new Date();
+    setDate(currentDate);
+  };
+
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
@@ -97,6 +151,9 @@ export default function AsignaAct() {
           onChangeText={handleSearch}
         />
       </View>
+      <TouchableOpacity style={styles.reportButton} onPress={handleGenerateReport}>
+        <Text style={styles.reportButtonText}>Generar Reporte</Text>
+      </TouchableOpacity>
       <Text style={styles.headerP}>Asignar Actividades</Text>
       {loading ? (
         <ActivityIndicator size="large" color="#F2E527" />
@@ -129,6 +186,30 @@ export default function AsignaAct() {
           <Icon name="cloud" size={30} color="#71728a" />
         </TouchableOpacity>
       </View>
+
+      <Modal visible={modalVisible} transparent={true} animationType="slide">
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Generar Reporte</Text>
+            <Text style={styles.datePickerText}>Fecha de inicio:</Text>
+            <DateTimePicker
+              value={startDate}
+              mode="date"
+              display="default"
+              onChange={(event, date) => handleDateChange(event, date, setStartDate)}
+            />
+            <Text style={styles.datePickerText}>Fecha límite:</Text>
+            <DateTimePicker
+              value={endDate}
+              mode="date"
+              display="default"
+              onChange={(event, date) => handleDateChange(event, date, setEndDate)}
+            />
+            <Button title="Generar" onPress={handleGenerate} />
+            <Button title="Cancelar" onPress={() => setModalVisible(false)} />
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }

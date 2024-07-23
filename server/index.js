@@ -3,7 +3,7 @@ const mysql = require('mysql');
 const md5 = require('md5'); // Importar el módulo md5
 const crypto = require('crypto');
 const router = express.Router();
-const pdf = require ('pdfkit');
+const pdfkit = require('pdfkit');
 const fs = require ('fs');
 
 const app = express();
@@ -11,87 +11,80 @@ const port = 3000;
 
 app.use(express.json());
 
-// Endpoint para generar el reporte
 app.get('/generate-report', async (req, res) => {
+  const { startDate, endDate } = req.query;
+
+  // Validate dates
+  if (!startDate || !endDate) {
+    return res.status(400).json({ error: 'Start date and end date are required' });
+  }
+
   try {
-    const lastWeek = new Date();
-    lastWeek.setDate(lastWeek.getDate() - 7);
-
-    // Consulta a la base de datos
+    // Fetch activities within the date range
     const query = `
-      SELECT a.id_act, a.actividad, a.fech_ini, a.fech_lim, a.area, a.estatus, u.nom_usu, u.app_usu
-      FROM actividades a
-      JOIN usuarios u ON a.id_usu_asignado = u.id_usu
-      WHERE a.fech_fin >= ?
-    `;
-
-    db.query(query, [lastWeek], (err, results) => {
-      if (err) {
-        console.error('Error executing query:', err);
-        res.status(500).send('Error generating report');
-        return;
-      }
-
-      const activities = results;
-
-      // Organizar las actividades por empleado
-      const activitiesByEmployee = {};
-      activities.forEach(activity => {
-        const employeeName = `${activity.nom_usu} ${activity.app_usu}`;
-        if (!activitiesByEmployee[employeeName]) {
-          activitiesByEmployee[employeeName] = [];
-        }
-        activitiesByEmployee[employeeName].push(activity);
-      });
-
-      // Crear el documento PDF
-      const doc = new pdf();
-      const filePath = './report.pdf';
-      doc.pipe(fs.createWriteStream(filePath));
-
-      // Añadir contenido al PDF
-      doc.fontSize(16).text('Reporte de Actividades - Última Semana', { align: 'center' });
-      doc.moveDown();
-
-      let grandTotal = 0;
-      for (const [employee, activities] of Object.entries(activitiesByEmployee)) {
-        doc.fontSize(14).text(`Empleado: ${employee}`, { underline: true });
-        doc.moveDown();
-        let total = 0;
-        activities.forEach(activity => {
-          doc.fontSize(12).text(`Actividad: ${activity.actividad}`);
-          doc.text(`Fecha de inicio: ${activity.fech_ini}`);
-          doc.text(`Fecha límite: ${activity.fech_lim}`);
-          doc.text(`Área: ${activity.area}`);
-          doc.text(`Estatus: ${activity.estatus}`);
-          doc.moveDown();
-          total += 1;
-        });
-        doc.fontSize(12).text(`Total de actividades: ${total}`);
-        doc.moveDown();
-        grandTotal += total;
-      }
-
-      doc.fontSize(14).text(`Grand Total de actividades: ${grandTotal}`, { align: 'center' });
-      doc.end();
-
-      doc.on('finish', () => {
-        res.download(filePath, 'report.pdf', (err) => {
-          if (err) {
-            console.error('Error al descargar el archivo:', err);
-            res.status(500).send('Error al descargar el archivo');
-          }
-          fs.unlink(filePath, (err) => {
-            if (err) {
-              console.error('Error al eliminar el archivo:', err);
-            }
-          });
-        });
+    SELECT a.id_act, a.actividad, a.descripcion, a.area, a.fech_ini, a.fech_fin, u.nom_usu, u.app_usu
+    FROM actividades a
+    JOIN usuarios u ON a.id_usu_asignado = u.id_usu
+    WHERE a.fech_ini BETWEEN ? AND ? AND a.estatus = 0
+    ORDER BY u.nom_usu, a.fech_ini
+  `;  
+    const results = await new Promise((resolve, reject) => {
+      db.query(query, [startDate, endDate], (err, results) => {
+        if (err) reject(err);
+        else resolve(results);
       });
     });
+
+    // Create PDF
+    const doc = new pdfkit();
+    const filePath = './report.pdf';
+    doc.pipe(fs.createWriteStream(filePath));
+
+    // Header
+    doc.fontSize(16).text('Activity Report', { align: 'center', underline: true });
+    doc.fontSize(12).text(`Date Range: ${startDate} to ${endDate}`, { align: 'center', margin: 5 });
+    doc.moveDown();
+
+    let currentEmployee = '';
+    let totalActivities = 0;
+
+    results.forEach((activity) => {
+      const employee = `${activity.nom_usu} ${activity.app_usu}`;
+      if (employee !== currentEmployee) {
+        if (currentEmployee) {
+          doc.moveDown().fontSize(12).text(`Total activities for ${currentEmployee}: ${totalActivities}`, { underline: true });
+          doc.moveDown();
+        }
+        currentEmployee = employee;
+        totalActivities = 0;
+        doc.fontSize(14).text(`Employee: ${employee}`, { underline: true });
+        doc.moveDown();
+      }
+      doc.fontSize(12).text(`Activity: ${activity.actividad}`);
+      doc.text(`Description: ${activity.descripcion}`);
+      doc.text(`Area: ${activity.area}`);
+      doc.text(`Start Date: ${activity.fech_ini}`);
+      doc.text(`End Date: ${activity.fech_fin}`);
+      doc.moveDown();
+      totalActivities++;
+    });
+
+    if (currentEmployee) {
+      doc.moveDown().fontSize(12).text(`Total activities for ${currentEmployee}: ${totalActivities}`, { underline: true });
+    }
+
+    doc.moveDown().fontSize(12).text(`Total activities completed in the range: ${results.length}`, { underline: true });
+
+    // Footer
+    doc.fontSize(10).text('Generated by JacketOn', { align: 'center', margin: [0, 20] });
+
+    doc.end();
+
+    // Send the PDF file as response
+    res.sendFile(filePath, { root: __dirname });
   } catch (error) {
-    console.error('Error al generar el reporte:', error);
-    res.status(500).send('Error al generar el reporte');
+    console.error('Error generating report:', error);
+    res.status(500).json({ error: 'Error generating report' });
   }
 });
 
@@ -262,7 +255,7 @@ const db = mysql.createPool({
   connectionLimit: 10,
   host: 'localhost',
   user: 'root',
-  password: 'Moreno0310SM21',
+  password: 'Arasaka16.',
   database: 'jacketon',
   port: 3306,
 });
