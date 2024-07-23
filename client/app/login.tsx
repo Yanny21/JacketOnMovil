@@ -45,9 +45,6 @@ export default function Login() {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.inner}>
           <View style={styles.container}>
-            <TouchableOpacity style={styles.closeButton}>
-              <FontAwesome name="times" size={22} color="#F2E527" />
-            </TouchableOpacity>
             <Text style={styles.title}>Iniciar sesión</Text>
             <View style={styles.inputContainer}>
               <TextInput

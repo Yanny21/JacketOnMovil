@@ -189,7 +189,7 @@ export default function DetallesAct() {
             </View>
           ))
         ) : (
-          <Text style={styles.noActivities}>No hay actividades para este usuario.</Text>
+          <Text style={styles.headerV}>No hay actividades para este usuario.</Text>
         )}
       </ScrollView>
       <View style={styles.navigationBar}>

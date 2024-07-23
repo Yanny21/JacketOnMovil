@@ -262,7 +262,7 @@ const db = mysql.createPool({
   connectionLimit: 10,
   host: 'localhost',
   user: 'root',
-  password: 'Arasaka16.',
+  password: 'Moreno0310SM21',
   database: 'jacketon',
   port: 3306,
 });

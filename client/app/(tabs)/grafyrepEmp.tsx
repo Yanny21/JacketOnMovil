@@ -68,13 +68,13 @@ export default function GraficaReportesEmp() {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('/porfile')}
+          onPress={() => handleNavigation('/profile')}
         >
           <Icon name="account" size={30} color="#71728a" />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('/screen5')}
+          onPress={() => handleNavigation('/calidadEmp')}
         >
           <Icon name="cloud" size={30} color="#71728a" />
         </TouchableOpacity>

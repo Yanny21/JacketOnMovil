@@ -158,9 +158,9 @@ const Actividades = () => {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.inner}>
           <View style={styles.container}>
-            <TouchableOpacity style={styles.closeButton} onPress={handleIconPress}>
-              <FontAwesome name="times" size={22} color="#F2E527" />
-            </TouchableOpacity>
+             <TouchableOpacity style={styles.closeButton} onPress={() => router.push('asignaAct')}>
+                <FontAwesome name="times" size={22} color="#F2E527" />
+             </TouchableOpacity>
             <Text style={styles.title}>Asignar actividad para:</Text>
             <Text style={styles.subtitle}>{name}</Text>
             <View style={styles.inputContainer}>

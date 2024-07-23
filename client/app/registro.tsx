@@ -36,9 +36,6 @@ export default function SignUpScreen() {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.inner}>
           <View style={styles.container}>
-            <TouchableOpacity style={styles.closeButton}>
-              <FontAwesome name="times" size={22} color="#F2E527" />
-            </TouchableOpacity>
             <Text style={styles.title}>Registro</Text>
             <View style={styles.inputContainer}>
               <TextInput

@@ -77,9 +77,9 @@ export default function EditScreen() {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.inner}>
           <View style={styles.container}>
-            <TouchableOpacity style={styles.closeButton} onPress={handleIconPress}>
-              <FontAwesome name="times" size={22} color="#F2E527" />
-            </TouchableOpacity>
+           <TouchableOpacity style={styles.closeButton} onPress={() => router.push('porfile')}>
+                                       <FontAwesome name="times" size={22} color="#F2E527" />
+                                    </TouchableOpacity>
             <Text style={styles.title}>Editar Información</Text>
             <View style={styles.inputContainer}>
               <TextInput
