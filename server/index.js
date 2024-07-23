@@ -3,11 +3,97 @@ const mysql = require('mysql');
 const md5 = require('md5'); // Importar el módulo md5
 const crypto = require('crypto');
 const router = express.Router();
+const pdf = require ('pdfkit');
+const fs = require ('fs');
 
 const app = express();
 const port = 3000;
 
 app.use(express.json());
+
+// Endpoint para generar el reporte
+app.get('/generate-report', async (req, res) => {
+  try {
+    const lastWeek = new Date();
+    lastWeek.setDate(lastWeek.getDate() - 7);
+
+    // Consulta a la base de datos
+    const query = `
+      SELECT a.id_act, a.actividad, a.fech_ini, a.fech_lim, a.area, a.estatus, u.nom_usu, u.app_usu
+      FROM actividades a
+      JOIN usuarios u ON a.id_usu_asignado = u.id_usu
+      WHERE a.fech_fin >= ?
+    `;
+
+    db.query(query, [lastWeek], (err, results) => {
+      if (err) {
+        console.error('Error executing query:', err);
+        res.status(500).send('Error generating report');
+        return;
+      }
+
+      const activities = results;
+
+      // Organizar las actividades por empleado
+      const activitiesByEmployee = {};
+      activities.forEach(activity => {
+        const employeeName = `${activity.nom_usu} ${activity.app_usu}`;
+        if (!activitiesByEmployee[employeeName]) {
+          activitiesByEmployee[employeeName] = [];
+        }
+        activitiesByEmployee[employeeName].push(activity);
+      });
+
+      // Crear el documento PDF
+      const doc = new pdf();
+      const filePath = './report.pdf';
+      doc.pipe(fs.createWriteStream(filePath));
+
+      // Añadir contenido al PDF
+      doc.fontSize(16).text('Reporte de Actividades - Última Semana', { align: 'center' });
+      doc.moveDown();
+
+      let grandTotal = 0;
+      for (const [employee, activities] of Object.entries(activitiesByEmployee)) {
+        doc.fontSize(14).text(`Empleado: ${employee}`, { underline: true });
+        doc.moveDown();
+        let total = 0;
+        activities.forEach(activity => {
+          doc.fontSize(12).text(`Actividad: ${activity.actividad}`);
+          doc.text(`Fecha de inicio: ${activity.fech_ini}`);
+          doc.text(`Fecha límite: ${activity.fech_lim}`);
+          doc.text(`Área: ${activity.area}`);
+          doc.text(`Estatus: ${activity.estatus}`);
+          doc.moveDown();
+          total += 1;
+        });
+        doc.fontSize(12).text(`Total de actividades: ${total}`);
+        doc.moveDown();
+        grandTotal += total;
+      }
+
+      doc.fontSize(14).text(`Grand Total de actividades: ${grandTotal}`, { align: 'center' });
+      doc.end();
+
+      doc.on('finish', () => {
+        res.download(filePath, 'report.pdf', (err) => {
+          if (err) {
+            console.error('Error al descargar el archivo:', err);
+            res.status(500).send('Error al descargar el archivo');
+          }
+          fs.unlink(filePath, (err) => {
+            if (err) {
+              console.error('Error al eliminar el archivo:', err);
+            }
+          });
+        });
+      });
+    });
+  } catch (error) {
+    console.error('Error al generar el reporte:', error);
+    res.status(500).send('Error al generar el reporte');
+  }
+});
 
 //detalles actividad por id de empleado al que se le asignaron
 app.get('/actividades/:id_emp', (req, res) => {

@@ -9,13 +9,6 @@ import { styles } from './styles';
 export default function DetallesAct() {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [iconColors, setIconColors] = useState({
-    viewList: '#71728a',
-    alertCircle: '#71728a',
-    accountGroup: '#71728a',
-    account: '#71728a',
-    cloud: '#71728a',
-  });
   const [userType, setUserType] = useState(null); // Estado para almacenar el tipo de usuario
 
   const router = useRouter();
@@ -56,7 +49,7 @@ export default function DetallesAct() {
     try {
       if (id_emp) {
         console.log(`Fetching activities for user ID: ${id_emp}`);
-        const response = await axios.get(`http://192.168.3.30:3000/actividades/${id_emp}`);
+        const response = await axios.get(`http://10.13.6.149:3000/actividades/${id_emp}`);
         console.log('Response data:', response.data);
 
         // Verifica el tipo de contenido de la respuesta
@@ -88,8 +81,8 @@ export default function DetallesAct() {
   };
 
   const handleNavigation = (screen) => {
-     router.push(screen); // Navegar a la pantalla específica
-   };
+    router.push(screen); // Navegar a la pantalla específica
+  };
 
   const handleAssignActivity = () => {
     router.push({
@@ -122,7 +115,7 @@ export default function DetallesAct() {
         {
           text: 'Eliminar',
           onPress: () => {
-            axios.delete(`http://192.168.3.30:3000/delete-act/${id}`)
+            axios.delete(`http://10.13.6.149:3000/delete-act/${id}`)
               .then(response => {
                 console.log('Actividad eliminada:', response.data.message);
                 setActivities(prevActivities => prevActivities.filter(activity => activity.id_act !== id));
@@ -138,6 +131,20 @@ export default function DetallesAct() {
     );
   };
 
+  const handleGenerateReport = async () => {
+    try {
+      const response = await axios.get('http://10.13.6.149:3000/generate-report', {
+        responseType: 'blob',
+      });
+      const file = new Blob([response.data], { type: 'application/pdf' });
+      const fileURL = URL.createObjectURL(file);
+      window.open(fileURL);
+    } catch (error) {
+      console.error('Error al generar el reporte:', error);
+      Alert.alert('Error', 'No se pudo generar el reporte');
+    }
+  };
+
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
@@ -151,6 +158,9 @@ export default function DetallesAct() {
   return (
     <View style={styles.containerV}>
       <Text style={styles.headerV}>Actividades de: {name}</Text>
+      <TouchableOpacity style={styles.reportButton} onPress={handleGenerateReport}>
+        <Text style={styles.reportButtonText}>Generar Reporte</Text>
+      </TouchableOpacity>
       <TouchableOpacity style={styles.assignButton} onPress={handleAssignActivity}>
         <Text style={styles.assignButtonText}>Asignar actividad</Text>
       </TouchableOpacity>
@@ -183,37 +193,37 @@ export default function DetallesAct() {
         )}
       </ScrollView>
       <View style={styles.navigationBar}>
-             <TouchableOpacity
-               style={styles.navButton}
-                onPress={() => handleNavigation('/asignaAct')}
-             >
-               <Icon name="view-list" size={30} color="#F2E527" />
-             </TouchableOpacity>
-             <TouchableOpacity
-               style={styles.navButton}
-               onPress={() => handleNavigation('/graficasyrep')}
-             >
-               <Icon name="alert-circle" size={30} color="#71728a" />
-             </TouchableOpacity>
-             <TouchableOpacity
-               style={styles.navButton}
-               onPress={() => handleNavigation('/screen3')}
-             >
-               <Icon name="account-group" size={30} color="#71728a" />
-             </TouchableOpacity>
-             <TouchableOpacity
-               style={styles.navButton}
-               onPress={() => handleNavigation('/porfile')}
-             >
-               <Icon name="account" size={30} color="#71728a" />
-             </TouchableOpacity>
-             <TouchableOpacity
-               style={styles.navButton}
-               onPress={() => handleNavigation('/calidad')}
-             >
-               <Icon name="cloud" size={30} color="#71728a" />
-             </TouchableOpacity>
-           </View>
+        <TouchableOpacity
+          style={styles.navButton}
+          onPress={() => handleNavigation('/asignaAct')}
+        >
+          <Icon name="view-list" size={30} color="#F2E527" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.navButton}
+          onPress={() => handleNavigation('/graficasyrep')}
+        >
+          <Icon name="alert-circle" size={30} color="#71728a" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.navButton}
+          onPress={() => handleNavigation('/screen3')}
+        >
+          <Icon name="account-group" size={30} color="#71728a" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.navButton}
+          onPress={() => handleNavigation('/porfile')}
+        >
+          <Icon name="account" size={30} color="#71728a" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.navButton}
+          onPress={() => handleNavigation('/calidad')}
+        >
+          <Icon name="cloud" size={30} color="#71728a" />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }

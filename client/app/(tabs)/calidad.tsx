@@ -6,7 +6,7 @@ import { useRouter } from 'expo-router';
 
 // Asegúrate de definir tu API Key y la URL base de tu servidor backend
 const API_KEY = '57f703f3-d073-4840-9b44-f4542d5ed860';
-const BACKEND_URL = 'http://192.168.3.30:3000/';  // URL del backend
+const BACKEND_URL = 'http://10.13.6.149:3000/';  // URL del backend
 const LATITUDE = '19.4326';  // Coordenadas de México City
 const LONGITUDE = '-99.1332';
 
