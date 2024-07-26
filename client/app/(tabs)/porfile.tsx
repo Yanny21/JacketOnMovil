@@ -1,39 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert, Modal } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
+import { BarCodeScanner } from 'expo-barcode-scanner';
 import { styles } from './styles';
 
 const NavigationBar = ({ handleNavigation }) => (
   <View style={styles.navigationBar}>
-    <TouchableOpacity
-      style={styles.navButton}
-      onPress={() => handleNavigation('/asignaAct')}
-    >
+    <TouchableOpacity style={styles.navButton} onPress={() => handleNavigation('/asignaAct')}>
       <Icon name="view-list" size={30} color="#71728a" />
     </TouchableOpacity>
-    <TouchableOpacity
-      style={styles.navButton}
-      onPress={() => handleNavigation('/graficasyrep')}
-    >
+    <TouchableOpacity style={styles.navButton} onPress={() => handleNavigation('/graficasyrep')}>
       <Icon name="alert-circle" size={30} color="#71728a" />
     </TouchableOpacity>
-    <TouchableOpacity
-      style={styles.navButton}
-      onPress={() => handleNavigation('/metricas')}
-    >
+    <TouchableOpacity style={styles.navButton} onPress={() => handleNavigation('/metricas')}>
       <Icon name="account-group" size={30} color="#71728a" />
     </TouchableOpacity>
-    <TouchableOpacity
-      style={styles.navButton}
-    >
+    <TouchableOpacity style={styles.navButton}>
       <Icon name="account" size={30} color="#F2E527" />
     </TouchableOpacity>
-    <TouchableOpacity
-      style={styles.navButton}
-      onPress={() => handleNavigation('/calidad')}
-    >
+    <TouchableOpacity style={styles.navButton} onPress={() => handleNavigation('/calidad')}>
       <Icon name="cloud" size={30} color="#71728a" />
     </TouchableOpacity>
   </View>
@@ -42,6 +29,8 @@ const NavigationBar = ({ handleNavigation }) => (
 export default function MiCuenta() {
   const router = useRouter();
   const [userData, setUserData] = useState(null);
+  const [hasPermission, setHasPermission] = useState(null);
+  const [scanning, setScanning] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -65,12 +54,21 @@ export default function MiCuenta() {
     fetchUserData();
   }, []);
 
+  useEffect(() => {
+    const requestPermission = async () => {
+      const { status } = await BarCodeScanner.requestPermissionsAsync();
+      setHasPermission(status === 'granted');
+    };
+
+    requestPermission();
+  }, []);
+
   const handleEditPress = () => {
     router.push('/editar');
   };
 
   const handleNavigation = (screen) => {
-    router.push(screen); // Navegar a la pantalla específica
+    router.push(screen);
   };
 
   const handleLogout = async () => {
@@ -169,6 +167,38 @@ export default function MiCuenta() {
     );
   };
 
+  const handleBarCodeScanned = async ({ type, data }) => {
+    setScanning(false);
+    
+    try {
+      const storedUserData = await AsyncStorage.getItem('userData');
+      if (storedUserData) {
+        const { user_id } = JSON.parse(storedUserData);
+
+        const response = await fetch('http://192.168.3.15:3000/sync-device', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ user_id, dispositivo: data }),
+        });
+
+        if (response.ok) {
+          Alert.alert('Dispositivo sincronizado correctamente');
+        } else {
+          console.error('Error syncing device:', response.statusText);
+          Alert.alert('Error al sincronizar el dispositivo');
+        }
+      } else {
+        console.error('User data not found during device sync');
+        Alert.alert('Error al sincronizar el dispositivo');
+      }
+    } catch (error) {
+      console.error('Error during device sync:', error);
+      Alert.alert('Error al sincronizar el dispositivo');
+    }
+  };
+
   const renderButtons = () => {
     if (!userData) return null;
 
@@ -183,11 +213,7 @@ export default function MiCuenta() {
     }
 
     return buttons.map((button, index) => (
-      <TouchableOpacity
-        key={index}
-        style={[styles.gridItem, button.style || {}]}
-        onPress={button.action}
-      >
+      <TouchableOpacity key={index} style={[styles.gridItem, button.style || {}]} onPress={button.action}>
         <Icon name={button.icon} size={50} color="#2B2C5E" />
         <Text style={styles.buttonText}>{button.label}</Text>
       </TouchableOpacity>
@@ -212,6 +238,33 @@ export default function MiCuenta() {
         </>
       )}
       <View style={styles.gridContainer}>{renderButtons()}</View>
+
+      {userData && userData.user_type === 'empleado' && (
+        <TouchableOpacity style={styles.syncButton} onPress={() => setScanning(true)}>
+          <Icon name="qrcode-scan" size={30} color="#fff" />
+          <Text style={styles.syncButtonText}>Sincronizar Dispositivo</Text>
+        </TouchableOpacity>
+      )}
+
+      {scanning && hasPermission && (
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={scanning}
+          onRequestClose={() => setScanning(false)}
+        >
+          <BarCodeScanner
+            onBarCodeScanned={scanning ? handleBarCodeScanned : undefined}
+            style={StyleSheet.absoluteFillObject}
+          />
+          <TouchableOpacity
+            style={styles.closeScannerButton}
+            onPress={() => setScanning(false)}
+          >
+            <Text style={styles.closeScannerButtonText}>Cerrar Escáner</Text>
+          </TouchableOpacity>
+        </Modal>
+      )}
 
       <NavigationBar handleNavigation={handleNavigation} />
     </View>

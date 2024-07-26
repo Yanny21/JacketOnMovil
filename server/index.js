@@ -11,6 +11,53 @@ const port = 3000;
 
 app.use(express.json());
 
+app.get('/activities-per-day', async (req, res) => {
+  const { startDate, endDate } = req.query;
+
+  if (!startDate || !endDate) {
+    return res.status(400).json({ error: 'Start date and end date are required' });
+  }
+
+  try {
+    const query = `
+      SELECT DATE(fech_ini) as date, COUNT(*) as count
+      FROM actividades
+      WHERE fech_ini BETWEEN ? AND ? AND estatus = 0
+      GROUP BY DATE(fech_ini)
+      ORDER BY DATE(fech_ini)
+    `;
+    const results = await new Promise((resolve, reject) => {
+      db.query(query, [startDate, endDate], (err, results) => {
+        if (err) reject(err);
+        else resolve(results);
+      });
+    });
+
+    res.json(results);
+  } catch (error) {
+    console.error('Error fetching activities data:', error);
+    res.status(500).json({ error: 'Error fetching activities data' });
+  }
+});
+
+
+// Endpoint para sincronizar dispositivo
+app.post('/sync-device', (req, res) => {
+  const { user_id, dispositivo } = req.body;
+  const query = 'UPDATE usuarios SET dispositivo = ? WHERE id_usu = ?';
+
+  db.query(query, [dispositivo, user_id], (err, results) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      res.status(500).json({ error: 'Error syncing device' });
+    } else {
+      console.log('Device synced successfully:', results);
+      res.status(200).json({ message: 'Device synced successfully' });
+    }
+  });
+});
+
+//endpoint para generacion de reportes
 app.get('/generate-report', async (req, res) => {
   const { startDate, endDate } = req.query;
 

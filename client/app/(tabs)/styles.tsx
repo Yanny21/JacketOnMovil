@@ -139,7 +139,7 @@ export const styles = StyleSheet.create({
              fontSize: 24,
              fontWeight: 'bold',
              marginBottom: 30,
-             marginTop: 30,
+             marginTop: 10,
              textAlign: 'center',
            },
   employeeCard: {
@@ -472,5 +472,31 @@ name: {
                     map: {
                       width: '100%',
                       height: '100%',
+                    },
+                    syncButton: {
+                      backgroundColor: '#2B2C5E',
+                      borderRadius: 10,
+                      padding: 10,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      margin: 20,
+                    },
+                    syncButtonText: {
+                      color: '#fff',
+                      marginLeft: 10,
+                    },
+                    closeScannerButton: {
+                      position: 'absolute',
+                      bottom: 50,
+                      left: '50%',
+                      transform: [{ translateX: -50 }],
+                      backgroundColor: '#2B2C5E',
+                      padding: 15,
+                      borderRadius: 10,
+                    },
+                    closeScannerButtonText: {
+                      color: '#fff',
+                      textAlign: 'center',
                     },
 });

@@ -154,6 +154,10 @@ const handleGenerate = async () => {
       <TouchableOpacity style={styles.reportButton} onPress={handleGenerateReport}>
         <Text style={styles.reportButtonText}>Generar Reporte</Text>
       </TouchableOpacity>
+      <TouchableOpacity style={styles.reportButton} onPress={() => setGraphModalVisible(true)}>
+  <Text style={styles.reportButtonText}>Mostrar Gráfica</Text>
+</TouchableOpacity>
+
       <Text style={styles.headerP}>Asignar Actividades</Text>
       {loading ? (
         <ActivityIndicator size="large" color="#F2E527" />
