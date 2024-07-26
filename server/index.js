@@ -5,29 +5,25 @@ const crypto = require('crypto');
 const router = express.Router();
 const pdfkit = require('pdfkit');
 const fs = require ('fs');
+const { createCanvas, loadImage } = require('canvas');
+const Chart = require('chart.js/auto');
 
 const app = express();
 const port = 3000;
 
 app.use(express.json());
 
-app.get('/activities-per-day', async (req, res) => {
-  const { startDate, endDate } = req.query;
-
-  if (!startDate || !endDate) {
-    return res.status(400).json({ error: 'Start date and end date are required' });
-  }
-
+app.get('/activities-per-week', async (req, res) => {
   try {
     const query = `
       SELECT DATE(fech_ini) as date, COUNT(*) as count
       FROM actividades
-      WHERE fech_ini BETWEEN ? AND ? AND estatus = 0
+      WHERE fech_ini >= DATE_SUB(CURDATE(), INTERVAL 1 WEEK) AND estatus = 0
       GROUP BY DATE(fech_ini)
       ORDER BY DATE(fech_ini)
     `;
     const results = await new Promise((resolve, reject) => {
-      db.query(query, [startDate, endDate], (err, results) => {
+      db.query(query, (err, results) => {
         if (err) reject(err);
         else resolve(results);
       });
@@ -38,8 +34,7 @@ app.get('/activities-per-day', async (req, res) => {
     console.error('Error fetching activities data:', error);
     res.status(500).json({ error: 'Error fetching activities data' });
   }
-});
-
+}); 
 
 // Endpoint para sincronizar dispositivo
 app.post('/sync-device', (req, res) => {
@@ -57,24 +52,24 @@ app.post('/sync-device', (req, res) => {
   });
 });
 
-//endpoint para generacion de reportes
 app.get('/generate-report', async (req, res) => {
   const { startDate, endDate } = req.query;
 
-  // Validate dates
+  // Validar fechas
   if (!startDate || !endDate) {
     return res.status(400).json({ error: 'Start date and end date are required' });
   }
 
   try {
-    // Fetch activities within the date range
+    // Consultar actividades dentro del rango de fechas
     const query = `
-    SELECT *
-    FROM actividades a
-    JOIN usuarios u ON a.id_usu_asignado = u.id_usu
-    WHERE a.fech_ini BETWEEN ? AND ? AND a.estatus = 0
-    ORDER BY u.nom_usu, a.fech_ini
-  `;  
+      SELECT *
+      FROM actividades a
+      JOIN usuarios u ON a.id_usu_asignado = u.id_usu
+      WHERE a.fech_ini BETWEEN ? AND ? AND a.estatus = 0
+      ORDER BY u.nom_usu, a.fech_ini;
+    `;
+    
     const results = await new Promise((resolve, reject) => {
       db.query(query, [startDate, endDate], (err, results) => {
         if (err) reject(err);
@@ -82,12 +77,62 @@ app.get('/generate-report', async (req, res) => {
       });
     });
 
-    // Create PDF
+    // Preparar datos para la gráfica
+    const activitiesPerDay = {};
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const dateRange = [];
+
+    // Rellenar las fechas del rango
+    for (let d = start; d <= end; d.setDate(d.getDate() + 1)) {
+      const date = new Date(d).toISOString().split('T')[0];
+      dateRange.push(date);
+      activitiesPerDay[date] = 0; // Inicializar con 0
+    }
+
+    // Contar actividades por día
+    results.forEach(activity => {
+      const date = new Date(activity.fech_ini).toISOString().split('T')[0];
+      if (activitiesPerDay.hasOwnProperty(date)) {
+        activitiesPerDay[date]++;
+      }
+    });
+
+    const dates = dateRange;
+    const counts = dates.map(date => activitiesPerDay[date]);
+
+    // Crear gráfica con chart.js
+    const canvas = createCanvas(800, 400);
+    const ctx = canvas.getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: dates,
+        datasets: [{
+          label: 'Number of Activities',
+          data: counts,
+          borderColor: 'blue',
+          backgroundColor: 'rgba(0, 0, 255, 0.1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          x: { beginAtZero: true },
+          y: { beginAtZero: true }
+        }
+      }
+    });
+
+    const chartImage = canvas.toBuffer('image/png');
+    fs.writeFileSync('./chart.png', chartImage);
+
+    // Crear PDF
     const doc = new pdfkit();
     const filePath = './report.pdf';
     doc.pipe(fs.createWriteStream(filePath));
 
-    // Header
+    // Encabezado
     doc.fontSize(16).text('Activity Report', { align: 'center', underline: true });
     doc.fontSize(12).text(`Date Range: ${startDate} to ${endDate}`, { align: 'center', margin: 5 });
     doc.moveDown();
@@ -122,18 +167,29 @@ app.get('/generate-report', async (req, res) => {
 
     doc.moveDown().fontSize(12).text(`Total activities completed in the range: ${results.length}`, { underline: true });
 
-    // Footer
+    // Insertar gráfica en el PDF después del texto
+    doc.addPage();
+    doc.fontSize(16).text('Activities Per Day', { align: 'center', underline: true });
+    doc.moveDown();
+    doc.image('./chart.png', { width: 500, align: 'center' });
+    doc.moveDown();
+
+    // Pie de página
     doc.fontSize(10).text('Generated by JacketOn', { align: 'center', margin: [0, 20] });
 
     doc.end();
 
-    // Send the PDF file as response
+    // Eliminar archivo de gráfica temporal
+    fs.unlinkSync('./chart.png');
+
+    // Enviar el archivo PDF como respuesta
     res.sendFile(filePath, { root: __dirname });
   } catch (error) {
     console.error('Error generating report:', error);
     res.status(500).json({ error: 'Error generating report' });
   }
 });
+
 
 //detalles actividad por id de empleado al que se le asignaron
 app.get('/actividades/:id_emp', (req, res) => {

@@ -107,14 +107,20 @@ const handleGenerate = async () => {
   try {
     // Fetch the PDF from the server
     const response = await fetch('http://192.168.3.15:3000/generate-report?startDate=' + startDate.toISOString().split('T')[0] + '&endDate=' + endDate.toISOString().split('T')[0]);
+
+    // Asegúrate de que la respuesta sea del tipo esperado
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
     const blob = await response.blob();
     const base64Data = await blobToBase64(blob);
     const fileUri = FileSystem.documentDirectory + 'report.pdf';
 
-    // Write the file in Base64 encoding
+    // Escribir el archivo en codificación Base64
     await FileSystem.writeAsStringAsync(fileUri, base64Data, { encoding: FileSystem.EncodingType.Base64 });
 
-    // Open the file
+    // Abrir el archivo
     await Print.printAsync({
       uri: fileUri,
     });
@@ -124,7 +130,7 @@ const handleGenerate = async () => {
     console.error('Error generating or opening PDF:', error);
   }
 };
-  
+
 
   const handleDateChange = (event, selectedDate, setDate) => {
     const currentDate = selectedDate || new Date();
@@ -154,10 +160,6 @@ const handleGenerate = async () => {
       <TouchableOpacity style={styles.reportButton} onPress={handleGenerateReport}>
         <Text style={styles.reportButtonText}>Generar Reporte</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.reportButton} onPress={() => setGraphModalVisible(true)}>
-  <Text style={styles.reportButtonText}>Mostrar Gráfica</Text>
-</TouchableOpacity>
-
       <Text style={styles.headerP}>Asignar Actividades</Text>
       {loading ? (
         <ActivityIndicator size="large" color="#F2E527" />
