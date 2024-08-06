@@ -1,33 +1,59 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Alert, Linking, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useRouter } from 'expo-router';
+import ChartComponent from './ChartComponent'; // Ajusta la ruta según sea necesario
 import { styles } from './styles';
 
-export default function GraficaReportes() {
-  const [selectedTab, setSelectedTab] = useState('Incidencias');
+export default function GraficaReportesEmp() {
+  const [selectedTab, setSelectedTab] = useState('Ambientales');
+  const [average, setAverage] = useState(null);
   const router = useRouter();
 
   const handleNavigation = (screen) => {
     router.push(screen);
   };
 
+  const handleAverageCalculated = (avg) => {
+    setAverage(avg);
+  };
+
+  const handleGenerateReport = async () => {
+    try {
+      const response = await fetch('http://192.168.3.15:3000/generate-report-chart', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        Linking.openURL(url);
+      } else {
+        Alert.alert('Error', 'No se pudo generar el reporte. Inténtalo de nuevo más tarde.');
+      }
+    } catch (error) {
+      console.error('Error generating report:', error);
+      Alert.alert('Error', 'Ocurrió un error al generar el reporte.');
+    }
+  };
+
   const renderContent = () => {
     return (
       <View style={styles.contentContainer}>
-        <Text style={styles.headerV}>Incidencias</Text>
-        <View style={styles.chart}>
-          {/* Aquí puedes agregar tu componente de gráfica */}
+        <Text style={styles.headerV}>Ambientales (CO)</Text>
+        <View style={styles.chartContainer}>
+          <ChartComponent onAverageCalculated={handleAverageCalculated} />
         </View>
         <View style={styles.reportContainer}>
-          <Text style={styles.reportText}>34.1</Text>
-          <Text style={styles.reportSubtext}>Promedio mensual</Text>
-          <Text style={styles.reportText}>10%</Text>
-          <Text style={styles.reportSubtext}>Incremento respecto al mes anterior</Text>
+          <Text style={styles.reportText}>{average !== null ? average.toFixed(2) : 'Cargando...'}</Text>
+          <Text style={styles.reportSubtext}>Promedio</Text>
         </View>
         <TouchableOpacity
           style={styles.reportButton}
-          onPress={() => handleNavigation('/reporte')}
+          onPress={handleGenerateReport}
         >
           <Text style={styles.reportButtonText}>Generar reporte</Text>
         </TouchableOpacity>
@@ -39,16 +65,16 @@ export default function GraficaReportes() {
     <View style={styles.containerV}>
       <View style={styles.tabContainer}>
         <TouchableOpacity
-          style={[styles.tabButton, selectedTab === 'Incidencias' && styles.activeTabButton]}
-          onPress={() => setSelectedTab('Incidencias')}
+          style={[styles.tabButton, selectedTab === 'Ambientales' && styles.activeTabButton]}
+          onPress={() => setSelectedTab('Ambientales')}
         >
-          <Text style={styles.tabText}>Incidencias</Text>
+          <Text style={styles.tabText}>Ambientales</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.tabButton, selectedTab === 'CO2' && styles.activeTabButton]}
-          onPress={() => setSelectedTab('CO2')}
+          style={[styles.tabButton, selectedTab === 'Vitales' && styles.activeTabButton]}
+          onPress={() => setSelectedTab('Vitales')}
         >
-          <Text style={styles.tabText}>CO2</Text>
+          <Text style={styles.tabText}>Vitales</Text>
         </TouchableOpacity>
       </View>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
@@ -57,7 +83,7 @@ export default function GraficaReportes() {
       <View style={styles.navigationBar}>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('/asignaAct')}
+          onPress={() => handleNavigation('/actEmp')}
         >
           <Icon name="view-list" size={30} color="#71728a" />
         </TouchableOpacity>
@@ -68,19 +94,13 @@ export default function GraficaReportes() {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('/metricas')}
-        >
-          <Icon name="account-group" size={30} color="#71728a" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => handleNavigation('/porfile')}
+          onPress={() => handleNavigation('/profile')}
         >
           <Icon name="account" size={30} color="#71728a" />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.navButton}
-          onPress={() => handleNavigation('/calidad')}
+          onPress={() => handleNavigation('/calidadEmp')}
         >
           <Icon name="cloud" size={30} color="#71728a" />
         </TouchableOpacity>

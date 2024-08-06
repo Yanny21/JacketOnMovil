@@ -12,7 +12,9 @@
   "dependencies": {
     "canvas": "^2.11.2",
     "chart.js": "^4.4.3",
+    "cors": "^2.8.5",
     "express": "^4.19.2",
+    "firebase-admin": "^12.3.0",
     "fs": "^0.0.1-security",
     "highcharts": "^11.4.6",
     "jsdom": "^24.1.1",

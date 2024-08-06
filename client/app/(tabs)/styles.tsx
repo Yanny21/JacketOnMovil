@@ -216,6 +216,52 @@ export const styles = StyleSheet.create({
        height: 80, // Ajusta esta altura según sea necesario
        marginBottom: 40,
      },
+    tabContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      paddingVertical: 10,
+      backgroundColor: '#ffffff',
+    },
+    tabButton: {
+      padding: 10,
+    },
+    activeTabButton: {
+      borderBottomWidth: 2,
+      borderBottomColor: '#007bff',
+    },
+    tabText: {
+      fontSize: 16,
+    },
+    contentContainer: {
+      flex: 1,
+      paddingHorizontal: 16,
+      paddingVertical: 10,
+    },
+    chartContainer: {
+      flex: 1,
+    },
+    reportContainer: {
+      alignItems: 'center',
+      marginVertical: 10,
+    },
+    reportText: {
+      fontSize: 24,
+      fontWeight: 'bold',
+    },
+    reportSubtext: {
+      fontSize: 16,
+      color: '#666',
+    },
+    reportButton: {
+      backgroundColor: '#007bff',
+      padding: 10,
+      borderRadius: 5,
+      alignItems: 'center',
+    },
+    reportButtonText: {
+      color: '#fff',
+      fontSize: 16,
+    },
       scrollViewContent: {
          paddingVertical: 40,
          paddingHorizontal: 20,
