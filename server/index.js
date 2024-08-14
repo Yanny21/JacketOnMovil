@@ -9,8 +9,9 @@ const { createCanvas, loadImage } = require('canvas');
 const Chart = require('chart.js/auto');
 const admin = require('firebase-admin');
 const cors = require('cors');
+const moment = require('moment-timezone');
 
-const serviceAccount = require('./alpha-prime-873c5-firebase-adminsdk-8pz1j-b8c78247f7.json'); // Replace with the path to your service account key
+const serviceAccount = require('./alpha-prime-873c5-firebase-adminsdk-8pz1j-95befd88e2.json'); // Replace with the path to your service account key
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -28,7 +29,15 @@ app.use(express.json());
 
 app.get('/data', async (req, res) => {
   try {
-    const collectionRef = uwu.collection('SensorData').doc('Measurements').collection('historian');
+    // Obtener el valor de user_device desde la consulta
+    const { collection } = req.query;
+
+    if (!collection) {
+      return res.status(400).send('User device not specified');
+    }
+
+    // Referencia a la colección en Firestore basada en user_device
+    const collectionRef = uwu.collection(collection);
     const snapshot = await collectionRef.orderBy('createdAt').get();
 
     if (snapshot.empty) {
@@ -43,17 +52,26 @@ app.get('/data', async (req, res) => {
       // Debug output
       console.log('Document Data:', docData);
 
-      const timestamp = docData.createdAt ? docData.createdAt.toDate().getTime() : null;
-      const mq7Value = docData.rawData && typeof docData.rawData.MQ7_AO === 'object' ? docData.rawData.MQ7_AO.after : 0;
+      const timestamp = docData.createdAt ? docData.createdAt.toDate() : null;
 
-      if (timestamp !== null) {
-        data.push({
-          x: timestamp, // Ensure 'createdAt' is a Firestore Timestamp
-          y: mq7Value // Use the value from MQ7_AO or 0 if not present
-        });
-      } else {
-        console.warn('Missing timestamp in document:', docData);
-      }
+      // Convert timestamp to the desired timezone (UTC-6)
+      const formattedTimestamp = timestamp ? moment(timestamp).tz('America/Mexico_City').format() : null;
+
+      data.push({
+        timestamp: formattedTimestamp, // Formatted timestamp in the desired timezone
+        HeartRate: docData.HeartRate || null,
+        Temperature: docData.Temperature || null,
+        MQ135_AO: docData.MQ135_AO || null,
+        SpO2: docData.SpO2 || null,
+        GyroX: docData.GyroX || null,
+        GyroY: docData.GyroY || null,
+        GyroZ: docData.GyroZ || null,
+        MQ7_AO: docData.MQ7_AO || null,
+        Humidity: docData.Humidity || null,
+        AccelX: docData.AccelX || null,
+        AccelY: docData.AccelY || null,
+        AccelZ: docData.AccelZ || null
+      });
     });
 
     res.json(data);
@@ -246,8 +264,18 @@ app.get('/generate-report', async (req, res) => {
 
 app.get('/generate-report-chart', async (req, res) => {
   try {
-    // Fetch data from Firestore
-    const collectionRef = uwu.collection('SensorData').doc('Measurements').collection('historian');
+    const { metric, user_device } = req.query; // Obtén la métrica y el dispositivo desde los parámetros de consulta
+    
+    if (!metric || !user_device) {
+      return res.status(400).send('Metric and user_device parameters are required');
+    }
+
+    const validMetrics = ['MQ7_AO', 'MQ135_AO', 'Humidity', 'Temperature', 'HeartRate'];
+    if (!validMetrics.includes(metric)) {
+      return res.status(400).send('Invalid metric');
+    }
+
+    const collectionRef = uwu.collection(user_device); // Usa user_device como nombre de la colección
     const snapshot = await collectionRef.orderBy('createdAt').get();
 
     if (snapshot.empty) {
@@ -260,10 +288,10 @@ app.get('/generate-report-chart', async (req, res) => {
       const docData = doc.data();
       console.log('Document Data:', docData);
 
-      if (docData.rawData && typeof docData.rawData.MQ7_AO === 'object' && docData.createdAt) {
+      if (docData[metric] && docData.createdAt) {
         data.push({
           x: docData.createdAt.toDate().getTime(),
-          y: docData.rawData.MQ7_AO.after
+          y: docData[metric]
         });
       } else {
         console.warn('Invalid data format in document:', docData);
@@ -274,7 +302,7 @@ app.get('/generate-report-chart', async (req, res) => {
     const chartData = {
       labels: data.map(d => new Date(d.x).toLocaleDateString()),
       datasets: [{
-        label: 'MQ7_AO Data',
+        label: `${metric} Data`,
         data: data.map(d => d.y),
         borderColor: 'blue',
         backgroundColor: 'rgba(0, 0, 255, 0.1)',
@@ -315,30 +343,31 @@ app.get('/generate-report-chart', async (req, res) => {
     doc.pipe(fs.createWriteStream(filePath));
 
     // Header
-    doc.fontSize(16).text('Sensor Data Report', { align: 'center', underline: true });
-    doc.fontSize(12).text('Generated Report', { align: 'center' });
-    doc.moveDown();
+    doc.fontSize(16).text('Sensor Data Report', { align: 'center' });
 
-    // Add chart image to PDF
-    doc.image('./chart.png', { width: 500, align: 'center' });
-    doc.moveDown();
+    // Add the chart image
+    doc.image('./chart.png', {
+      fit: [500, 300],
+      align: 'center'
+    });
 
     // Footer
-    doc.fontSize(10).text('Generated by YourAppName', { align: 'center', margin: [0, 20] });
-
+    doc.fontSize(12).text('Generated on ' + new Date().toLocaleDateString(), { align: 'center' });
     doc.end();
 
-    // Delete temporary chart image file
-    fs.unlinkSync('./chart.png');
-
-    // Send the PDF file as response
-    res.sendFile(filePath, { root: __dirname });
+    res.download(filePath, 'report-chart.pdf', (err) => {
+      if (err) {
+        console.error('Error sending PDF:', err);
+        res.status(500).send('Error sending PDF');
+      } else {
+        console.log('PDF sent successfully');
+      }
+    });
   } catch (error) {
     console.error('Error generating report:', error);
-    res.status(500).json({ error: 'Error generating report' });
+    res.status(500).send(`Error generating report: ${error.message}`);
   }
 });
-
 
 
 //detalles actividad por id de empleado al que se le asignaron
@@ -354,6 +383,24 @@ app.get('/actividades/:id_emp', (req, res) => {
     if (err) {
       console.error('Error executing query:', err);
       res.status(500).json({ error: 'Error fetching activities' });
+    } else {
+      console.log('Query results:', results);
+      res.json(results);
+    }
+  });
+});
+
+// Endpoint to fetch all incidents
+app.get('/incidencias', (req, res) => {
+  const query = `
+    SELECT id_inci, fech_inci, descripcion
+    FROM incidencias
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      res.status(500).json({ error: 'Error fetching incidents' });
     } else {
       console.log('Query results:', results);
       res.json(results);
@@ -542,6 +589,33 @@ app.get('/connect-db', (req, res) => {
   });
 });
 
+// Endpoint para obtener empleados
+app.get('/api/employees', (req, res) => {
+  db.getConnection((err, connection) => {
+    if (err) {
+      console.error('Error al conectar a la base de datos:', err);
+      return res.status(500).json({ message: 'No hay conexión a la base de datos' });
+    }
+
+    // Consulta para obtener todos los datos de los empleados
+    connection.query(
+      'SELECT id_usu as id, nom_usu as name, app_usu as lastName, email_usu as email, dispositivo as device FROM usuarios WHERE tipo_usu = "empleado"',
+      (err, results) => {
+        connection.release(); // Liberar la conexión después de la consulta
+
+        if (err) {
+          console.error('Error al consultar empleados:', err);
+          return res.status(500).json({ message: 'Error al consultar empleados' });
+        }
+
+        // Enviar los datos de los empleados como respuesta en formato JSON
+        res.json(results);
+      }
+    );
+  });
+});
+
+
 
 // Endpoint para verificar las credenciales de inicio de sesión
 app.post('/login', (req, res) => {
@@ -594,7 +668,8 @@ app.post('/login', (req, res) => {
               user_name: user.nom_usu,
               user_email: user.email_usu,
               user_last_name: user.app_usu,
-              user_type: user.tipo_usu
+              user_type: user.tipo_usu,
+              user_device: user.dispositivo
               // Agregar más campos del usuario si es necesario
             }
           });

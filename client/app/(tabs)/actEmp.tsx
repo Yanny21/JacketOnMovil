@@ -23,7 +23,7 @@ export default function detEmpAct() {
         if (storedUserData) {
           const parsedUserData = JSON.parse(storedUserData);
           setUserName(`${parsedUserData.user_name} ${parsedUserData.user_last_name}`);
-          const response = await fetch(`http://192.168.3.15:3000/actividades/${parsedUserData.user_id}`);
+          const response = await fetch(`http://192.168.0.15:3000/actividades/${parsedUserData.user_id}`);
           const data = await response.json();
           if (response.ok) {
             setActivities(data); // Directamente establece las actividades ya que la respuesta es un array de objetos
@@ -42,7 +42,7 @@ export default function detEmpAct() {
 
   const handleStartActivity = async (activityId) => {
     try {
-      const response = await fetch(`http://192.168.3.15:3000/start-activity/${activityId}`, {
+      const response = await fetch(`http://192.168.0.15:3000/start-activity/${activityId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -73,7 +73,7 @@ export default function detEmpAct() {
 
   const handleFinishActivity = async (activityId) => {
     try {
-      const response = await fetch(`http://192.168.3.15:3000/end-activity/${activityId}`, {
+      const response = await fetch(`http://192.168.0.15:3000/end-activity/${activityId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
