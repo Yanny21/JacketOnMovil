@@ -49,7 +49,7 @@ export default function DetallesAct() {
     try {
       if (id_emp) {
         console.log(`Fetching activities for user ID: ${id_emp}`);
-        const response = await axios.get(`http://192.168.3.15:3000/actividades/${id_emp}`);
+        const response = await axios.get(`http://192.168.0.15:3000/actividades/${id_emp}`);
         console.log('Response data:', response.data);
 
         // Verifica el tipo de contenido de la respuesta
@@ -115,7 +115,7 @@ export default function DetallesAct() {
         {
           text: 'Eliminar',
           onPress: () => {
-            axios.delete(`http://192.168.3.15:3000/delete-act/${id}`)
+            axios.delete(`http://192.168.0.15:3000/delete-act/${id}`)
               .then(response => {
                 console.log('Actividad eliminada:', response.data.message);
                 setActivities(prevActivities => prevActivities.filter(activity => activity.id_act !== id));

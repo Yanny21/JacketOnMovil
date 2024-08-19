@@ -6,7 +6,7 @@ import { useRouter } from 'expo-router';
 import MapView, { Marker } from 'react-native-maps';
 
 const API_KEY = '57f703f3-d073-4840-9b44-f4542d5ed860';
-const BACKEND_URL = 'http://192.168.3.15:3000/';
+const BACKEND_URL = 'http://192.168.0.15:3000/';
 const LATITUDE = '19.4326';
 const LONGITUDE = '-99.1332';
 

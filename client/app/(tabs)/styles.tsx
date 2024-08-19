@@ -275,7 +275,7 @@ name: {
     fontWeight: 'bold',
     color: '#2B2C5E',
   },
-
+  
    infoContainer: {
       alignItems: 'flex-start',
       marginVertical: 20,
@@ -315,65 +315,12 @@ name: {
                 marginTop: 5, // Espacio entre el icono y el texto
                 marginBottom: 10,
               },
-               tabContainer: {
-                  flexDirection: 'row',
-                  justifyContent: 'center',
-                  marginBottom: 20,
-                },
-                tabButton: {
-                  paddingVertical: 10,
-                  paddingHorizontal: 20,
-                  borderRadius: 20,
-                  backgroundColor: '#E0E0E0',
-                  marginHorizontal: 5,
-                  marginTop: 40,
-                },
-                activeTabButton: {
-                  backgroundColor: '#F2E527',
-                },
-                tabText: {
-                  fontSize: 16,
-                  fontWeight: 'bold',
-
-                },
-                contentContainer: {
-                  alignItems: 'center',
-                },
                 chart: {
                   width: '100%',
                   height: 200,
                   backgroundColor: '#f0f0f0',
                   borderRadius: 10,
                   marginBottom: 20,
-                },
-                reportContainer: {
-                  alignItems: 'center',
-                  marginBottom: 20,
-                },
-                reportText: {
-                  fontSize: 34,
-                  fontWeight: 'bold',
-                  color: '#2B2C5E',
-                },
-                reportSubtext: {
-                  fontSize: 16,
-                  color: '#888',
-                },
-                reportButton: {
-                  backgroundColor: '#F2E527',
-                  padding: 10,
-                  borderRadius: 10,
-                  alignItems: 'center',
-                  marginBottom: 20,
-                },
-                reportButtonText: {
-                  color: '#fff',
-                  fontSize: 16,
-                  fontWeight: 'bold',
-                },
-                scrollViewContent: {
-                  paddingVertical: 40,
-                  paddingHorizontal: 20,
                 },
                 containerIQ: {
                   flex: 1,
@@ -545,4 +492,28 @@ name: {
                       color: '#fff',
                       textAlign: 'center',
                     },
+                    incidentList: {
+                      flex: 1,
+                    },
+                    incidentCard: {
+                      backgroundColor: '#f9f9f9',
+                      borderRadius: 5,
+                      padding: 15,
+                      marginBottom: 10,
+                      shadowColor: '#000',
+                      shadowOffset: { width: 0, height: 2 },
+                      shadowOpacity: 0.1,
+                      shadowRadius: 5,
+                      elevation: 3,
+                    },
+                    incidentDate: {
+                      fontSize: 14,
+                      fontWeight: 'bold',
+                      color: '#333',
+                    },
+                    incidentDescription: {
+                      fontSize: 16,
+                      color: '#555',
+                      marginTop: 5,
+                    },       
 });

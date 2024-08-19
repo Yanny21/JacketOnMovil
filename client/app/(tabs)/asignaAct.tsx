@@ -51,7 +51,7 @@ export default function AsignaAct() {
 
   const fetchEmpleados = async () => {
     try {
-      const response = await fetch('http://192.168.3.15:3000/empleados');
+      const response = await fetch('http://192.168.0.15:3000/empleados');
       if (!response.ok) {
         throw new Error('Error al obtener empleados');
       }
@@ -106,7 +106,7 @@ const blobToBase64 = (blob) => {
 const handleGenerate = async () => {
   try {
     // Fetch the PDF from the server
-    const response = await fetch('http://192.168.3.15:3000/generate-report?startDate=' + startDate.toISOString().split('T')[0] + '&endDate=' + endDate.toISOString().split('T')[0]);
+    const response = await fetch('http://192.168.0.15:3000/generate-report?startDate=' + startDate.toISOString().split('T')[0] + '&endDate=' + endDate.toISOString().split('T')[0]);
 
     // Asegúrate de que la respuesta sea del tipo esperado
     if (!response.ok) {
@@ -120,12 +120,20 @@ const handleGenerate = async () => {
     // Escribir el archivo en codificación Base64
     await FileSystem.writeAsStringAsync(fileUri, base64Data, { encoding: FileSystem.EncodingType.Base64 });
 
-    // Abrir el archivo
-    await Print.printAsync({
-      uri: fileUri,
-    });
+    // Introduce un tiempo de espera antes de abrir el archivo (por ejemplo, 2 segundos)
+    setTimeout(async () => {
+      try {
+        // Abrir el archivo
+        await Print.printAsync({
+          uri: fileUri,
+        });
 
-    setModalVisible(false);
+        setModalVisible(false);
+      } catch (error) {
+        console.error('Error opening PDF:', error);
+      }
+    }, 4000); // 2000 milisegundos = 2 segundos
+
   } catch (error) {
     console.error('Error generating or opening PDF:', error);
   }
@@ -179,7 +187,7 @@ const handleGenerate = async () => {
         <TouchableOpacity style={styles.navButton}>
           <Icon name="view-list" size={30} color="#F2E527" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navButton} onPress={() => handleNavigation('/graficasyrep')}>
+        <TouchableOpacity style={styles.navButton} onPress={() => handleNavigation('/ListadoIncidencias')}>
           <Icon name="alert-circle" size={30} color="#71728a" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.navButton} onPress={() => handleNavigation('/metricas')}>

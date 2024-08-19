@@ -11,7 +11,7 @@ const NavigationBar = ({ handleNavigation }) => (
     <TouchableOpacity style={styles.navButton} onPress={() => handleNavigation('/asignaAct')}>
       <Icon name="view-list" size={30} color="#71728a" />
     </TouchableOpacity>
-    <TouchableOpacity style={styles.navButton} onPress={() => handleNavigation('/graficasyrep')}>
+    <TouchableOpacity style={styles.navButton} onPress={() => handleNavigation('/ListadoIncidencias')}>
       <Icon name="alert-circle" size={30} color="#71728a" />
     </TouchableOpacity>
     <TouchableOpacity style={styles.navButton} onPress={() => handleNavigation('/metricas')}>
@@ -38,7 +38,7 @@ export default function MiCuenta() {
         const storedUserData = await AsyncStorage.getItem('userData');
         if (storedUserData) {
           const parsedUserData = JSON.parse(storedUserData);
-          const response = await fetch(`http://192.168.3.15:3000/user-data?userId=${parsedUserData.user_id}`);
+          const response = await fetch(`http://192.168.0.15:3000/user-data?userId=${parsedUserData.user_id}`);
           const data = await response.json();
           if (response.ok) {
             setUserData(data.user);
@@ -77,7 +77,7 @@ export default function MiCuenta() {
       if (userData) {
         const { user_id } = JSON.parse(userData);
 
-        const response = await fetch('http://192.168.3.15:3000/logout', {
+        const response = await fetch('http://192.168.0.15:3000/logout', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -127,7 +127,7 @@ export default function MiCuenta() {
       if (userData) {
         const { user_id } = JSON.parse(userData);
 
-        const response = await fetch('http://192.168.3.15:3000/user-delete', {
+        const response = await fetch('http://192.168.0.15:3000/user-delete', {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
@@ -175,7 +175,7 @@ export default function MiCuenta() {
       if (storedUserData) {
         const { user_id } = JSON.parse(storedUserData);
 
-        const response = await fetch('http://192.168.3.15:3000/sync-device', {
+        const response = await fetch('http://192.168.0.15:3000/sync-device', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
